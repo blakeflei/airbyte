@@ -1329,6 +1329,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -2165,6 +2166,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -2500,6 +2502,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -2910,25 +2913,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - item
-            - revenueAccounts
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - item
-            - _embedded
-            - revenueAccount
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - item
-            - _links
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - item
-            - _embedded
-            - taxPolicy
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -3132,6 +3116,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -3408,6 +3393,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -3505,11 +3491,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - contact
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - company
       - type: RemoveFields
         field_pointers:
           - - _links
@@ -3774,6 +3755,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -4033,6 +4015,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -4145,6 +4128,7 @@ streams:
             value: "{{ stream_partition.company_id }}"
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -4277,11 +4261,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - user
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - unit
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -4424,6 +4403,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -4521,6 +4501,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -4637,6 +4618,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -4845,31 +4827,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - reservation
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - account
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - contact
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - company
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - travelAgent
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - masterFolio
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - masterFolioRule
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -4964,6 +4921,7 @@ streams:
             value: "{{ stream_interval.folio_id }}"
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - params
       - type: AddFields
         fields:
@@ -5092,6 +5050,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -7462,6 +7421,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -7588,7 +7548,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - unit
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -10034,7 +9993,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - owner
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -10158,15 +10116,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - fractional
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - owner
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - contract
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -10570,27 +10519,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - account
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - company
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - rateType
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - reservationType
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - travelAgent
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - promoCode
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -10703,15 +10631,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - unit
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - reservation
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - folioBreakdown
       - type: RemoveFields
         field_pointers:
           - - _links
@@ -10812,6 +10731,7 @@ streams:
             value: "{{ stream_partition.group_id }}"
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -10916,6 +10836,7 @@ streams:
             value: "{{ stream_partition.group_id }}"
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -11337,11 +11258,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - expenseAccount
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - taskList
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -11489,9 +11405,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - tasks
-            - "*"
-            - _links
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -11830,30 +11743,9 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - unit
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - user
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - cleanType
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - vendor
       - type: RemoveFields
         field_pointers:
           - - _links
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - reservation
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - nextReservation
       - type: RemoveFields
         field_pointers:
           - - assignees
@@ -11950,6 +11842,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -12058,11 +11951,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - node
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - parent
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -12118,6 +12006,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -12581,24 +12470,11 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - vendor
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - APAccount
       - type: RemoveFields
         field_pointers:
           - - lines
             - "*"
             - _links
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - owner
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - unit
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -12968,19 +12844,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - parent
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - taxDistrict
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - localOffice
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - type
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -13079,6 +12942,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -13189,6 +13053,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -13441,6 +13306,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -13604,6 +13470,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -13856,6 +13723,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -14146,7 +14014,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - owner
       - type: RemoveFields
         field_pointers:
           - - _links
@@ -15419,7 +15286,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - owner
       - type: RemoveFields
         field_pointers:
           - - _links
@@ -15429,36 +15295,6 @@ streams:
             path:
               - statement_id
             value: "{{ stream_interval.statement_id }}"
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - unit
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - parent
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - reservation
-            - _embedded
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - children
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - workOrder
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - hkWorkOrder
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - paymentType
-            - _embedded
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -15569,15 +15405,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - owner
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - unit
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - contract
       - type: RemoveFields
         field_pointers:
           - - _links
@@ -15856,6 +15683,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -18093,6 +17921,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -18382,7 +18211,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - parentRate
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -20173,54 +20001,9 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - unit
       - type: RemoveFields
         field_pointers:
           - - _links
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - links
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - guaranteePolicy
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - contact
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - cancellationPolicy
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - cancellationReason
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - user
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - type
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - rateType
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - cancelledBy
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - paymentMethod
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - channel
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -22024,54 +21807,9 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - unit
       - type: RemoveFields
         field_pointers:
           - - _links
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - links
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - guaranteePolicy
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - contact
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - cancellationPolicy
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - cancellationReason
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - user
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - type
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - rateType
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - cancelledBy
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - paymentMethod
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - channel
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -22206,6 +21944,7 @@ streams:
             value_type: integer
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -22470,6 +22209,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -22572,6 +22312,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -22654,6 +22395,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -22826,6 +22568,7 @@ streams:
             value_type: integer
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -23037,7 +22780,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - dateGroup
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -23286,6 +23028,7 @@ streams:
             value_type: integer
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -23417,6 +23160,7 @@ streams:
             value_type: integer
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -23556,6 +23300,7 @@ streams:
             value_type: integer
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -23756,6 +23501,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -25335,58 +25081,13 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - unit
       - type: RemoveFields
         field_pointers:
           - - _links
       - type: RemoveFields
         field_pointers:
-          - - _embedded
-            - links
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - guaranteePolicy
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - contact
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - cancellationPolicy
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - cancellationReason
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - user
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - type
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - rateType
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - cancelledBy
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - paymentMethod
-      - type: RemoveFields
-        field_pointers:
           - - guestBreakdown
             - rates
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - channel
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -25629,6 +25330,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -26976,6 +26678,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -27056,6 +26759,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -27140,6 +26844,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -27256,15 +26961,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - shortTermPolicy
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - longTermPolicy
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - salesTaxPolicy
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -27356,7 +27052,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - taxes
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -27512,7 +27207,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - account
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -27674,6 +27368,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -28178,35 +27873,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - node
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - parent
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - type
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - lodgingType
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - taxDistrict
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - localOffice
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - travelInsuranceProduct
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - cleanStatus
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -28323,6 +27989,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -28395,6 +28062,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -28490,6 +28158,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -28592,6 +28261,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -28925,15 +28595,9 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - unit
       - type: RemoveFields
         field_pointers:
           - - _links
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - reason
-            - _links
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -30108,6 +29772,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -30263,6 +29928,9 @@ streams:
             path:
               - unit_id
             value: "{{ stream_partition.unit_id }}"
+      - type: RemoveFields
+        field_pointers:
+          - - _embedded
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -30344,6 +30012,7 @@ streams:
     transformations:
       - type: RemoveFields
         field_pointers:
+          - - _embedded
           - - _links
       - type: AddFields
         fields:
@@ -30857,35 +30526,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - node
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - parent
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - type
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - lodgingType
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - taxDistrict
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - localOffice
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - travelInsuranceProduct
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - cleanStatus
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -31310,7 +30950,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - lodgingType
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -31459,6 +31098,9 @@ streams:
             path:
               - unit_type_id
             value: "{{ stream_partition.unit_type_id }}"
+      - type: RemoveFields
+        field_pointers:
+          - - _embedded
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -31583,15 +31225,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - vendor
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - role
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - _links
       - type: AddFields
         fields:
           - type: AddedFieldDefinition
@@ -31703,15 +31336,6 @@ streams:
       - type: RemoveFields
         field_pointers:
           - - _embedded
-            - vendor
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - role
-      - type: RemoveFields
-        field_pointers:
-          - - _embedded
-            - _links
       - type: AddFields
         fields:
           - type: AddedFieldDefinition

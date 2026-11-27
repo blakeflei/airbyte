@@ -23323,42 +23323,6 @@ schemas:
     required:
       - id
     properties:
-      parent:
-        type:
-          - object
-          - "null"
-      currency:
-        type:
-          - object
-          - "null"
-      checkSetup:
-        type:
-          - object
-          - "null"
-      externalId:
-        type:
-          - object
-          - "null"
-      verifiedAt:
-        type:
-          - object
-          - "null"
-      stakeholder:
-        type:
-          - object
-          - "null"
-      externalName:
-        type:
-          - object
-          - "null"
-      dwollaCustomer:
-        type:
-          - object
-          - "null"
-      connectionStatus:
-        type:
-          - object
-          - "null"
       _airbyte_record_md5:
         $ref: "#/definitions/record_md5_property"
       description:

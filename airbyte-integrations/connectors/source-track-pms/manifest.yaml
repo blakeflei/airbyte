@@ -1,4 +1,4 @@
-version: 6.48.15
+version: 7.28.2
 
 type: DeclarativeSource
 
@@ -93,6 +93,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     nodes:
       type: DeclarativeStream
       name: nodes
@@ -180,6 +181,7 @@ definitions:
           field_pointers:
             - - _embedded
               - type
+        - $ref: "#/definitions/record_md5_transformation"
     roles:
       type: DeclarativeStream
       name: roles
@@ -251,6 +253,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     taxes:
       type: DeclarativeStream
       name: taxes
@@ -326,6 +329,7 @@ definitions:
           field_pointers:
             - - _embedded
               - account
+        - $ref: "#/definitions/record_md5_transformation"
     units:
       type: DeclarativeStream
       name: units
@@ -429,6 +433,7 @@ definitions:
           field_pointers:
             - - _embedded
               - cleanStatus
+        - $ref: "#/definitions/record_md5_transformation"
     users:
       type: DeclarativeStream
       name: users
@@ -448,6 +453,7 @@ definitions:
             inject_into: request_parameter
           pagination_strategy:
             type: PageIncrement
+            inject_on_first_request: true
             page_size: 100
             start_from_page: 1
         requester:
@@ -512,6 +518,7 @@ definitions:
           field_pointers:
             - - _embedded
               - _links
+        - $ref: "#/definitions/record_md5_transformation"
     folios:
       type: DeclarativeStream
       name: folios
@@ -611,6 +618,7 @@ definitions:
           field_pointers:
             - - _embedded
               - masterFolioRule
+        - $ref: "#/definitions/record_md5_transformation"
     groups:
       type: DeclarativeStream
       name: groups
@@ -706,6 +714,7 @@ definitions:
           field_pointers:
             - - _embedded
               - promoCode
+        - $ref: "#/definitions/record_md5_transformation"
     owners:
       type: DeclarativeStream
       name: owners
@@ -777,6 +786,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
       incremental_sync:
         type: DatetimeBasedCursor
         cursor_field: updatedAt
@@ -858,6 +868,11 @@ definitions:
         type: InlineSchemaLoader
         schema:
           $ref: "#/schemas/quotes"
+      transformations:
+        - type: RemoveFields
+          field_pointers:
+            - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     charges:
       type: DeclarativeStream
       name: charges
@@ -951,6 +966,7 @@ definitions:
               - item
               - _embedded
               - taxPolicy
+        - $ref: "#/definitions/record_md5_transformation"
     reviews:
       type: DeclarativeStream
       name: reviews
@@ -1022,6 +1038,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     contacts:
       type: DeclarativeStream
       name: contacts
@@ -1093,6 +1110,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
       incremental_sync:
         type: DatetimeBasedCursor
         cursor_field: updatedAt
@@ -1178,6 +1196,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
       incremental_sync:
         type: DatetimeBasedCursor
         cursor_field: updatedAt
@@ -1263,6 +1282,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     crm_tasks:
       type: DeclarativeStream
       name: crm_tasks
@@ -1342,6 +1362,7 @@ definitions:
           field_pointers:
             - - _embedded
               - unit
+        - $ref: "#/definitions/record_md5_transformation"
     documents:
       type: DeclarativeStream
       name: documents
@@ -1413,6 +1434,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     rate_types:
       type: DeclarativeStream
       name: rate_types
@@ -1488,6 +1510,7 @@ definitions:
           field_pointers:
             - - _embedded
               - parentRate
+        - $ref: "#/definitions/record_md5_transformation"
     date_groups:
       type: DeclarativeStream
       name: date_groups
@@ -1559,6 +1582,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     folios_logs:
       type: DeclarativeStream
       name: folios_logs
@@ -1648,6 +1672,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - params
+        - $ref: "#/definitions/record_md5_transformation"
     fractionals:
       type: DeclarativeStream
       name: fractionals
@@ -1723,6 +1748,7 @@ definitions:
           field_pointers:
             - - _embedded
               - unit
+        - $ref: "#/definitions/record_md5_transformation"
     groups_tags:
       type: DeclarativeStream
       name: groups_tags
@@ -1809,6 +1835,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     reservations_fees:
       type: DeclarativeStream
       name: reservations_fees
@@ -1849,6 +1876,13 @@ definitions:
                       Track's inappropriate 409 for page numbers too high.
                       Nothing to do but continue to work with the vendor.
               - type: DefaultErrorHandler
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: IGNORE
+                    predicate: "{{ response.status == 404 }}"
+                    http_codes: []
+                    error_message: "Track's 404 for a nonexistent resource endpoint. It is no issue if there is no data."
+              - type: DefaultErrorHandler
                 max_retries: 3
                 response_filters:
                   - type: HttpResponseFilter
@@ -1875,7 +1909,7 @@ definitions:
           parent_stream_configs:
             - type: ParentStreamConfig
               stream:
-                $ref: "#/definitions/streams/reservations"
+                $ref: "#/definitions/streams/reservations_all_parent"
               parent_key: id
               partition_field: reservation_id
       primary_key:
@@ -1892,9 +1926,11 @@ definitions:
               path:
                 - reservation_id
               value: "{{ stream_partition.reservation_id }}"
+              value_type: integer
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     reservations_tags:
       type: DeclarativeStream
       name: reservations_tags
@@ -1935,6 +1971,13 @@ definitions:
                       Track's inappropriate 409 for page numbers too high.
                       Nothing to do but continue to work with the vendor.
               - type: DefaultErrorHandler
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: IGNORE
+                    predicate: "{{ response.status == 404 }}"
+                    http_codes: []
+                    error_message: "Track's 404 for a nonexistent resource endpoint. It is no issue if there is no data."
+              - type: DefaultErrorHandler
                 max_retries: 3
                 response_filters:
                   - type: HttpResponseFilter
@@ -1961,7 +2004,7 @@ definitions:
           parent_stream_configs:
             - type: ParentStreamConfig
               stream:
-                $ref: "#/definitions/streams/reservations"
+                $ref: "#/definitions/streams/reservations_all_parent"
               parent_key: id
               partition_field: reservation_id
       primary_key:
@@ -1978,9 +2021,11 @@ definitions:
               path:
                 - reservation_id
               value: "{{ stream_partition.reservation_id }}"
+              value_type: integer
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     housekeeping_zones:
       type: DeclarativeStream
       name: housekeeping_zones
@@ -2052,6 +2097,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     nodes_types:
       type: DeclarativeStream
       name: nodes_types
@@ -2123,6 +2169,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     promo_codes:
       type: DeclarativeStream
       name: promo_codes
@@ -2194,6 +2241,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     units_taxes:
       type: DeclarativeStream
       name: units_taxes
@@ -2263,7 +2311,6 @@ definitions:
                 $ref: "#/definitions/streams/units_taxes_parent"
               parent_key: id
               partition_field: unit_id
-              incremental_dependency: true
       primary_key:
         - unit_id
         - id
@@ -2281,6 +2328,7 @@ definitions:
               path:
                 - unit_id
               value: "{{ stream_interval.unit_id }}"
+        - $ref: "#/definitions/record_md5_transformation"
     units_types:
       type: DeclarativeStream
       name: units_types
@@ -2357,6 +2405,7 @@ definitions:
           field_pointers:
             - - _embedded
               - lodgingType
+        - $ref: "#/definitions/record_md5_transformation"
     booking_fees:
       type: DeclarativeStream
       name: booking_fees
@@ -2428,6 +2477,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     folios_rules:
       type: DeclarativeStream
       name: folios_rules
@@ -2499,6 +2549,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     owners_units:
       type: DeclarativeStream
       name: owners_units
@@ -2568,7 +2619,6 @@ definitions:
                 $ref: "#/definitions/streams/owners"
               parent_key: id
               partition_field: owner_id
-              incremental_dependency: true
       primary_key:
         - ownerId
         - id
@@ -2592,6 +2642,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     reservations:
       type: DeclarativeStream
       name: reservations
@@ -2601,6 +2652,7 @@ definitions:
           type: JsonDecoder
         paginator:
           type: DefaultPaginator
+          reset_page_token_on_error: true
           pagination_strategy:
             type: CursorPagination
             cursor_value: "{{ response.scroll }}"
@@ -2624,6 +2676,7 @@ definitions:
                     error_message: >-
                       Track's inappropriate 409 for page numbers too high.
                       Nothing to do but continue to work with the vendor.
+              - $ref: "#/definitions/scroll_expired_error_handler"
               - type: DefaultErrorHandler
                 max_retries: 3
                 response_filters:
@@ -2710,6 +2763,7 @@ definitions:
           field_pointers:
             - - _embedded
               - channel
+        - $ref: "#/definitions/record_md5_transformation"
       incremental_sync:
         type: DatetimeBasedCursor
         cursor_field: updatedAt
@@ -2799,6 +2853,7 @@ definitions:
           field_pointers:
             - - _embedded
               - taxes
+        - $ref: "#/definitions/record_md5_transformation"
     units_blocks:
       type: DeclarativeStream
       name: units_blocks
@@ -2879,6 +2934,7 @@ definitions:
             - - _embedded
               - reason
               - _links
+        - $ref: "#/definitions/record_md5_transformation"
     custom_fields:
       type: DeclarativeStream
       name: custom_fields
@@ -2950,6 +3006,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     groups_blocks:
       type: DeclarativeStream
       name: groups_blocks
@@ -3033,6 +3090,12 @@ definitions:
               path:
                 - group_id
               value: "{{ stream_partition.group_id }}"
+        - type: AddFields
+          fields:
+            - type: AddedFieldDefinition
+              path:
+                - unit_id
+              value: "{{ ((record.get('_embedded') or {}).get('unit') or {}).get('id') }}"
         - type: RemoveFields
           field_pointers:
             - - _embedded
@@ -3048,6 +3111,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     lodging_types:
       type: DeclarativeStream
       name: lodging_types
@@ -3127,6 +3191,7 @@ definitions:
           field_pointers:
             - - _embedded
               - parent
+        - $ref: "#/definitions/record_md5_transformation"
     tax_districts:
       type: DeclarativeStream
       name: tax_districts
@@ -3210,6 +3275,7 @@ definitions:
           field_pointers:
             - - _embedded
               - salesTaxPolicy
+        - $ref: "#/definitions/record_md5_transformation"
     units_channel:
       type: DeclarativeStream
       name: units_channel
@@ -3279,7 +3345,6 @@ definitions:
                 $ref: "#/definitions/streams/units"
               parent_key: id
               partition_field: unit_id
-              incremental_dependency: true
       primary_key:
         - unit_id
         - id
@@ -3297,6 +3362,7 @@ definitions:
               path:
                 - unit_id
               value: "{{ stream_interval.unit_id }}"
+        - $ref: "#/definitions/record_md5_transformation"
     reservations_v2:
       type: DeclarativeStream
       name: reservations_v2
@@ -3306,6 +3372,7 @@ definitions:
           type: JsonDecoder
         paginator:
           type: DefaultPaginator
+          reset_page_token_on_error: true
           pagination_strategy:
             type: CursorPagination
             cursor_value: "{{ response.scroll }}"
@@ -3328,6 +3395,7 @@ definitions:
                     error_message: >-
                       Track's inappropriate 409 for page numbers too high.
                       Nothing to do but continue to work with the vendor.
+              - $ref: "#/definitions/scroll_expired_error_handler"
               - type: DefaultErrorHandler
                 max_retries: 3
                 response_filters:
@@ -3418,6 +3486,7 @@ definitions:
           field_pointers:
             - - _embedded
               - channel
+        - $ref: "#/definitions/record_md5_transformation"
       incremental_sync:
         type: DatetimeBasedCursor
         cursor_field: updatedAt
@@ -3503,6 +3572,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     units_bed_types:
       type: DeclarativeStream
       name: units_bed_types
@@ -3574,6 +3644,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     accounting_bills:
       type: DeclarativeStream
       name: accounting_bills
@@ -3658,6 +3729,7 @@ definitions:
             - - lines
               - "*"
               - _links
+        - $ref: "#/definitions/record_md5_transformation"
     accounting_items:
       type: DeclarativeStream
       name: accounting_items
@@ -3738,6 +3810,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _embedded
+        - $ref: "#/definitions/record_md5_transformation"
     groups_breakdown:
       type: DeclarativeStream
       name: groups_breakdown
@@ -3822,6 +3895,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     owners_contracts:
       type: DeclarativeStream
       name: owners_contracts
@@ -3893,6 +3967,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     owners_statements:
       type: DeclarativeStream
       name: owners_statements
@@ -3968,6 +4043,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     accounting_charges:
       type: DeclarativeStream
       name: accounting_charges
@@ -4042,6 +4118,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _embedded
+        - $ref: "#/definitions/record_md5_transformation"
     contacts_companies:
       type: DeclarativeStream
       name: contacts_companies
@@ -4111,7 +4188,6 @@ definitions:
                 $ref: "#/definitions/streams/contacts"
               parent_key: id
               partition_field: contact_id
-              incremental_dependency: true
       primary_key:
         - contactId
         - companyId
@@ -4131,6 +4207,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     fractionals_owners:
       type: DeclarativeStream
       name: fractionals_owners
@@ -4200,7 +4277,6 @@ definitions:
                 $ref: "#/definitions/streams/fractionals"
               parent_key: id
               partition_field: fraction_id
-              incremental_dependency: true
       primary_key:
         - fraction_id
         - id
@@ -4230,6 +4306,7 @@ definitions:
               path:
                 - fraction_id
               value: "{{ stream_partition.fraction_id }}"
+        - $ref: "#/definitions/record_md5_transformation"
     reservations_types:
       type: DeclarativeStream
       name: reservations_types
@@ -4301,6 +4378,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     units_taxes_parent:
       type: DeclarativeStream
       name: units_taxes_parent
@@ -4407,6 +4485,7 @@ definitions:
           field_pointers:
             - - _embedded
               - cleanStatus
+        - $ref: "#/definitions/record_md5_transformation"
     users_pii_redacted:
       type: DeclarativeStream
       name: users_pii_redacted
@@ -4526,6 +4605,7 @@ definitions:
               path:
                 - updatedBy
               value: "{{ record['updatedBy'] | hash('md5') }}"
+        - $ref: "#/definitions/record_md5_transformation"
     accounting_accounts:
       type: DeclarativeStream
       name: accounting_accounts
@@ -4602,6 +4682,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _embedded
+        - $ref: "#/definitions/record_md5_transformation"
     accounting_deposits:
       type: DeclarativeStream
       name: accounting_deposits
@@ -4676,6 +4757,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _embedded
+        - $ref: "#/definitions/record_md5_transformation"
     folios_transactions:
       type: DeclarativeStream
       name: folios_transactions
@@ -4763,6 +4845,7 @@ definitions:
               path:
                 - folio_id
               value: "{{ stream_interval.folio_id }}"
+        - $ref: "#/definitions/record_md5_transformation"
     owners_pii_redacted:
       type: DeclarativeStream
       name: owners_pii_redacted
@@ -4924,6 +5007,7 @@ definitions:
               path:
                 - updatedBy
               value: "{{ record['updatedBy'] | hash('md5') }}"
+        - $ref: "#/definitions/record_md5_transformation"
       incremental_sync:
         type: DatetimeBasedCursor
         cursor_field: updatedAt
@@ -5009,6 +5093,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     suspend_code_reasons:
       type: DeclarativeStream
       name: suspend_code_reasons
@@ -5080,6 +5165,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     units_amenity_groups:
       type: DeclarativeStream
       name: units_amenity_groups
@@ -5151,6 +5237,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     contacts_pii_redacted:
       type: DeclarativeStream
       name: contacts_pii_redacted
@@ -5318,6 +5405,7 @@ definitions:
               path:
                 - updatedBy
               value: "{{ record['updatedBy'] | hash('md5') }}"
+        - $ref: "#/definitions/record_md5_transformation"
       incremental_sync:
         type: DatetimeBasedCursor
         cursor_field: updatedAt
@@ -5401,7 +5489,6 @@ definitions:
                 $ref: "#/definitions/streams/fractionals"
               parent_key: id
               partition_field: fraction_id
-              incremental_dependency: true
       primary_key:
         - fraction_id
         - id
@@ -5423,6 +5510,7 @@ definitions:
               path:
                 - fraction_id
               value: "{{ stream_partition.fraction_id }}"
+        - $ref: "#/definitions/record_md5_transformation"
     crm_company_attachment:
       type: DeclarativeStream
       name: crm_company_attachment
@@ -5492,7 +5580,6 @@ definitions:
                 $ref: "#/definitions/streams/companies"
               parent_key: id
               partition_field: company_id
-              incremental_dependency: true
       primary_key:
         - company_id
         - id
@@ -5510,6 +5597,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     housekeeping_task_list:
       type: DeclarativeStream
       name: housekeeping_task_list
@@ -5587,6 +5675,7 @@ definitions:
               - tasks
               - "*"
               - _links
+        - $ref: "#/definitions/record_md5_transformation"
     units_daily_pricing_v2:
       type: DeclarativeStream
       name: units_daily_pricing_v2
@@ -5660,10 +5749,9 @@ definitions:
           parent_stream_configs:
             - type: ParentStreamConfig
               stream:
-                $ref: "#/definitions/streams/units_daily_pricing_parent"
+                $ref: "#/definitions/streams/units"
               parent_key: id
               partition_field: unit_id
-              incremental_dependency: true
       primary_key:
         - unit_id
         - rateTypeId
@@ -5678,6 +5766,7 @@ definitions:
               path:
                 - unit_id
               value: "{{ stream_partition.unit_id }}"
+        - $ref: "#/definitions/record_md5_transformation"
     accounting_transactions:
       type: DeclarativeStream
       name: accounting_transactions
@@ -5751,6 +5840,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     maintenance_work_orders:
       type: DeclarativeStream
       name: maintenance_work_orders
@@ -5848,6 +5938,7 @@ definitions:
           field_pointers:
             - - _embedded
               - unit
+        - $ref: "#/definitions/record_md5_transformation"
       incremental_sync:
         type: DatetimeBasedCursor
         cursor_field: updatedAt
@@ -5941,6 +6032,7 @@ definitions:
           field_pointers:
             - - _embedded
               - taskList
+        - $ref: "#/definitions/record_md5_transformation"
     housekeeping_work_orders:
       type: DeclarativeStream
       name: housekeeping_work_orders
@@ -6039,6 +6131,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - assignees
+        - $ref: "#/definitions/record_md5_transformation"
       incremental_sync:
         type: DatetimeBasedCursor
         cursor_field: updatedAt
@@ -6124,109 +6217,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
-    units_daily_pricing_parent:
-      type: DeclarativeStream
-      name: units_daily_pricing_parent
-      retriever:
-        type: SimpleRetriever
-        decoder:
-          type: JsonDecoder
-        paginator:
-          type: DefaultPaginator
-          page_size_option:
-            type: RequestOption
-            field_name: size
-            inject_into: request_parameter
-          page_token_option:
-            type: RequestOption
-            field_name: page
-            inject_into: request_parameter
-          pagination_strategy:
-            type: PageIncrement
-            page_size: 100
-            start_from_page: 1
-        requester:
-          $ref: "#/definitions/base_requester"
-          path: pms/units
-          http_method: GET
-          error_handler:
-            type: CompositeErrorHandler
-            error_handlers:
-              - type: DefaultErrorHandler
-                response_filters:
-                  - type: HttpResponseFilter
-                    action: IGNORE
-                    predicate: >-
-                      {{ response.status == 409 and response.detail == 'Invalid
-                      page provided' }}
-                    http_codes: []
-                    error_message: >-
-                      Track's inappropriate 409 for page numbers too high.
-                      Nothing to do but continue to work with the vendor.
-              - type: DefaultErrorHandler
-                max_retries: 3
-                response_filters:
-                  - type: HttpResponseFilter
-                    action: RATE_LIMITED
-                    predicate: "{{ response.status == 429 }}"
-                    http_codes: []
-                    error_message: >-
-                      Track rate limit (10,000 requests per 5 minutes) met,
-                      waiting 5 minutes and 5 seconds to reset.
-                backoff_strategies:
-                  - type: ConstantBackoffStrategy
-                    backoff_time_in_seconds: 305
-          request_headers:
-            accept: application/json
-        record_selector:
-          type: RecordSelector
-          extractor:
-            type: DpathExtractor
-            field_path:
-              - _embedded
-              - units
-      primary_key:
-        - id
-      schema_loader:
-        type: InlineSchemaLoader
-        schema:
-          $ref: "#/schemas/units_daily_pricing_parent"
-      transformations:
-        - type: RemoveFields
-          field_pointers:
-            - - _links
-        - type: RemoveFields
-          field_pointers:
-            - - _embedded
-              - node
-        - type: RemoveFields
-          field_pointers:
-            - - _embedded
-              - parent
-        - type: RemoveFields
-          field_pointers:
-            - - _embedded
-              - type
-        - type: RemoveFields
-          field_pointers:
-            - - _embedded
-              - lodgingType
-        - type: RemoveFields
-          field_pointers:
-            - - _embedded
-              - taxDistrict
-        - type: RemoveFields
-          field_pointers:
-            - - _embedded
-              - localOffice
-        - type: RemoveFields
-          field_pointers:
-            - - _embedded
-              - travelInsuranceProduct
-        - type: RemoveFields
-          field_pointers:
-            - - _embedded
-              - cleanStatus
+        - $ref: "#/definitions/record_md5_transformation"
     accounting_deposits_payments:
       type: DeclarativeStream
       name: accounting_deposits_payments
@@ -6283,6 +6274,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     units_types_daily_pricing_v2:
       type: DeclarativeStream
       name: units_types_daily_pricing_v2
@@ -6356,7 +6348,7 @@ definitions:
           parent_stream_configs:
             - type: ParentStreamConfig
               stream:
-                $ref: "#/definitions/streams/units_types_daily_pricing_parent"
+                $ref: "#/definitions/streams/units_types"
               parent_key: id
               partition_field: unit_type_id
       primary_key:
@@ -6373,6 +6365,7 @@ definitions:
               path:
                 - unit_type_id
               value: "{{ stream_partition.unit_type_id }}"
+        - $ref: "#/definitions/record_md5_transformation"
     reservations_discount_reasons:
       type: DeclarativeStream
       name: reservations_discount_reasons
@@ -6444,6 +6437,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     owners_statements_transactions:
       type: DeclarativeStream
       name: owners_statements_transactions
@@ -6566,6 +6560,7 @@ definitions:
             - - _embedded
               - paymentType
               - _embedded
+        - $ref: "#/definitions/record_md5_transformation"
     reservations_guarantee_policies:
       type: DeclarativeStream
       name: reservations_guarantee_policies
@@ -6641,82 +6636,7 @@ definitions:
           field_pointers:
             - - _embedded
               - dateGroup
-    units_types_daily_pricing_parent:
-      type: DeclarativeStream
-      name: units_types_daily_pricing_parent
-      retriever:
-        type: SimpleRetriever
-        decoder:
-          type: JsonDecoder
-        paginator:
-          type: DefaultPaginator
-          page_size_option:
-            type: RequestOption
-            field_name: size
-            inject_into: request_parameter
-          page_token_option:
-            type: RequestOption
-            field_name: page
-            inject_into: request_parameter
-          pagination_strategy:
-            type: PageIncrement
-            page_size: 100
-            start_from_page: 1
-            inject_on_first_request: true
-        requester:
-          $ref: "#/definitions/base_requester"
-          path: pms/units/types
-          http_method: GET
-          error_handler:
-            type: CompositeErrorHandler
-            error_handlers:
-              - type: DefaultErrorHandler
-                response_filters:
-                  - type: HttpResponseFilter
-                    action: IGNORE
-                    predicate: >-
-                      {{ response.status == 409 and response.detail == 'Invalid
-                      page provided' }}
-                    http_codes: []
-                    error_message: >-
-                      Track's inappropriate 409 for page numbers too high.
-                      Nothing to do but continue to work with the vendor.
-              - type: DefaultErrorHandler
-                max_retries: 3
-                response_filters:
-                  - type: HttpResponseFilter
-                    action: RATE_LIMITED
-                    predicate: "{{ response.status == 429 }}"
-                    http_codes: []
-                    error_message: >-
-                      Track rate limit (10,000 requests per 5 minutes) met,
-                      waiting 5 minutes and 5 seconds to reset.
-                backoff_strategies:
-                  - type: ConstantBackoffStrategy
-                    backoff_time_in_seconds: 305
-          request_headers:
-            accept: application/json
-        record_selector:
-          type: RecordSelector
-          extractor:
-            type: DpathExtractor
-            field_path:
-              - _embedded
-              - unitTypes
-      primary_key:
-        - id
-      schema_loader:
-        type: InlineSchemaLoader
-        schema:
-          $ref: "#/schemas/units_types_daily_pricing_parent"
-      transformations:
-        - type: RemoveFields
-          field_pointers:
-            - - _links
-        - type: RemoveFields
-          field_pointers:
-            - - _embedded
-              - lodgingType
+        - $ref: "#/definitions/record_md5_transformation"
     reservations_cancellation_reasons:
       type: DeclarativeStream
       name: reservations_cancellation_reasons
@@ -6788,6 +6708,7 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
     reservations_cancellation_policies:
       type: DeclarativeStream
       name: reservations_cancellation_policies
@@ -6859,6 +6780,529 @@ definitions:
         - type: RemoveFields
           field_pointers:
             - - _links
+        - $ref: "#/definitions/record_md5_transformation"
+    nodes_availability:
+      type: DeclarativeStream
+      name: nodes_availability
+      retriever:
+        type: SimpleRetriever
+        decoder:
+          type: JsonDecoder
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: "v2/pms/nodes/{{ stream_interval.node_id }}/availability"
+          type: HttpRequester
+          http_method: GET
+          error_handler:
+            type: CompositeErrorHandler
+            error_handlers:
+              - type: DefaultErrorHandler
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: IGNORE
+                    predicate: "{{ response.status == 409 and response.detail == 'Invalid page provided' }}"
+                    http_codes: []
+                    error_message: "Track's inappropriate 409 for page numbers too high. Nothing to do but continue to work with the vendor."
+              - type: DefaultErrorHandler
+                max_retries: 3
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: RATE_LIMITED
+                    predicate: "{{ response.status == 429 }}"
+                    http_codes: []
+                    error_message: "Track rate limit (10,000 requests per 5 minutes) met, waiting 5 minutes and 5 seconds to reset."
+                  - type: HttpResponseFilter
+                    action: IGNORE
+                    predicate: "{{ response.status == 404 }}"
+                    error_message: "{{  response.detail  }}"
+                backoff_strategies:
+                  - type: ConstantBackoffStrategy
+                    backoff_time_in_seconds: 305
+          request_headers:
+            accept: application/json
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path: []
+        partition_router:
+          type: SubstreamPartitionRouter
+          parent_stream_configs:
+            - type: ParentStreamConfig
+              stream:
+                $ref: "#/definitions/streams/nodes"
+              parent_key: id
+              partition_field: node_id
+      primary_key:
+        - node_id
+        - date
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/nodes_availability"
+      transformations:
+        - type: RemoveFields
+          field_pointers:
+            - - _links
+        - type: AddFields
+          fields:
+            - type: AddedFieldDefinition
+              path:
+                - node_id
+              value: "{{ stream_interval.node_id }}"
+        - $ref: "#/definitions/record_md5_transformation"
+    units_availability:
+      type: DeclarativeStream
+      name: units_availability
+      retriever:
+        type: SimpleRetriever
+        decoder:
+          type: JsonDecoder
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: "v2/pms/units/{{ stream_interval.unit_id }}/availability"
+          type: HttpRequester
+          http_method: GET
+          error_handler:
+            type: CompositeErrorHandler
+            error_handlers:
+              - type: DefaultErrorHandler
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: IGNORE
+                    predicate: "{{ response.status == 409 and response.detail == 'Invalid page provided' }}"
+                    http_codes: []
+                    error_message: "Track's inappropriate 409 for page numbers too high. Nothing to do but continue to work with the vendor."
+              - type: DefaultErrorHandler
+                max_retries: 3
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: RATE_LIMITED
+                    predicate: "{{ response.status == 429 }}"
+                    http_codes: []
+                    error_message: "Track rate limit (10,000 requests per 5 minutes) met, waiting 5 minutes and 5 seconds to reset."
+                  - type: HttpResponseFilter
+                    action: IGNORE
+                    predicate: "{{ response.status == 404 }}"
+                    error_message: "{{  response.detail  }}"
+                backoff_strategies:
+                  - type: ConstantBackoffStrategy
+                    backoff_time_in_seconds: 305
+          request_headers:
+            accept: application/json
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path: []
+        partition_router:
+          type: SubstreamPartitionRouter
+          parent_stream_configs:
+            - type: ParentStreamConfig
+              stream:
+                $ref: "#/definitions/streams/units"
+              parent_key: id
+              partition_field: unit_id
+      primary_key:
+        - unit_id
+        - date
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/units_availability"
+      transformations:
+        - type: RemoveFields
+          field_pointers:
+            - - _links
+        - type: AddFields
+          fields:
+            - type: AddedFieldDefinition
+              path:
+                - unit_id
+              value: "{{ stream_interval.unit_id }}"
+        - $ref: "#/definitions/record_md5_transformation"
+    reservations_all_parent:
+      type: DeclarativeStream
+      name: reservations_all_parent
+      retriever:
+        type: SimpleRetriever
+        decoder:
+          type: JsonDecoder
+        paginator:
+          type: DefaultPaginator
+          pagination_strategy:
+            type: CursorPagination
+            cursor_value: "{{ response.scroll }}"
+            stop_condition: "{{ not response._embedded.reservations }}"
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: pms/reservations
+          type: HttpRequester
+          use_cache: false
+          http_method: GET
+          error_handler:
+            type: CompositeErrorHandler
+            error_handlers:
+              - type: DefaultErrorHandler
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: IGNORE
+                    predicate: "{{ response.status == 409 and response.detail == 'Invalid page provided' }}"
+                    http_codes: []
+                    error_message: "Track's inappropriate 409 for page numbers too high. Nothing to do but continue to work with the vendor."
+              - $ref: "#/definitions/scroll_expired_error_handler"
+              - type: DefaultErrorHandler
+                max_retries: 3
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: RATE_LIMITED
+                    predicate: "{{ response.status == 429 }}"
+                    http_codes: []
+                    error_message: "Track rate limit (10,000 requests per 5 minutes) met, waiting 5 minutes and 5 seconds to reset."
+                backoff_strategies:
+                  - type: ConstantBackoffStrategy
+                    backoff_time_in_seconds: 305
+          request_headers:
+            accept: application/json
+          request_parameters:
+            size: "50"
+            scroll: "{{ next_page_token['next_page_token'] if next_page_token else '1' }}"
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - _embedded
+              - reservations
+      primary_key:
+        - id
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/reservations_all_parent"
+      transformations:
+        - type: RemoveFields
+          field_pointers:
+            - - _embedded
+              - unit
+        - type: RemoveFields
+          field_pointers:
+            - - _links
+        - type: RemoveFields
+          field_pointers:
+            - - _embedded
+              - links
+        - type: RemoveFields
+          field_pointers:
+            - - _embedded
+              - guaranteePolicy
+        - type: RemoveFields
+          field_pointers:
+            - - _embedded
+              - contact
+        - type: RemoveFields
+          field_pointers:
+            - - _embedded
+              - cancellationPolicy
+        - type: RemoveFields
+          field_pointers:
+            - - _embedded
+              - cancellationReason
+        - type: RemoveFields
+          field_pointers:
+            - - _embedded
+              - user
+        - type: RemoveFields
+          field_pointers:
+            - - _embedded
+              - type
+        - type: RemoveFields
+          field_pointers:
+            - - _embedded
+              - rateType
+        - type: RemoveFields
+          field_pointers:
+            - - _embedded
+              - cancelledBy
+        - type: RemoveFields
+          field_pointers:
+            - - _embedded
+              - paymentMethod
+        - type: RemoveFields
+          field_pointers:
+            - - _embedded
+              - channel
+        - $ref: "#/definitions/record_md5_transformation"
+    reservations_booking_fees:
+      type: DeclarativeStream
+      name: reservations_booking_fees
+      retriever:
+        type: SimpleRetriever
+        decoder:
+          type: JsonDecoder
+        paginator:
+          type: DefaultPaginator
+          page_size_option:
+            type: RequestOption
+            field_name: size
+            inject_into: request_parameter
+          page_token_option:
+            type: RequestOption
+            field_name: page
+            inject_into: request_parameter
+          pagination_strategy:
+            type: PageIncrement
+            page_size: 100
+            start_from_page: 1
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: "pms/reservations/{{ stream_partition.reservation_id }}/booking-fees"
+          type: HttpRequester
+          http_method: GET
+          error_handler:
+            type: CompositeErrorHandler
+            error_handlers:
+              - type: DefaultErrorHandler
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: IGNORE
+                    predicate: "{{ response.status == 409 and response.detail == 'Invalid page provided' }}"
+                    http_codes: []
+                    error_message: "Track's inappropriate 409 for page numbers too high. Nothing to do but continue to work with the vendor."
+              - type: DefaultErrorHandler
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: IGNORE
+                    predicate: "{{ response.status == 404 }}"
+                    http_codes: []
+                    error_message: "Track's 404 for a nonexistent resource endpoint. It is no issue if there is no data."
+              - type: DefaultErrorHandler
+                max_retries: 3
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: RATE_LIMITED
+                    predicate: "{{ response.status == 429 }}"
+                    http_codes: []
+                    error_message: "Track rate limit (10,000 requests per 5 minutes) met, waiting 5 minutes and 5 seconds to reset."
+                backoff_strategies:
+                  - type: ConstantBackoffStrategy
+                    backoff_time_in_seconds: 305
+          request_headers:
+            accept: application/json
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - _embedded
+              - bookingFees
+        partition_router:
+          type: SubstreamPartitionRouter
+          parent_stream_configs:
+            - type: ParentStreamConfig
+              stream:
+                $ref: "#/definitions/streams/reservations_all_parent"
+              parent_key: id
+              partition_field: reservation_id
+      primary_key:
+        - reservation_id
+        - id
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/reservations_booking_fees"
+      transformations:
+        - type: AddFields
+          fields:
+            - type: AddedFieldDefinition
+              path:
+                - reservation_id
+              value: "{{ stream_partition.reservation_id }}"
+              value_type: integer
+        - type: RemoveFields
+          field_pointers:
+            - - _links
+        - $ref: "#/definitions/record_md5_transformation"
+    reservations_logs:
+      type: DeclarativeStream
+      name: reservations_logs
+      retriever:
+        type: SimpleRetriever
+        decoder:
+          type: JsonDecoder
+        paginator:
+          type: DefaultPaginator
+          page_size_option:
+            type: RequestOption
+            field_name: size
+            inject_into: request_parameter
+          page_token_option:
+            type: RequestOption
+            field_name: page
+            inject_into: request_parameter
+          pagination_strategy:
+            type: PageIncrement
+            page_size: 100
+            start_from_page: 1
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: "pms/reservations/{{ stream_partition.reservation_id }}/logs"
+          type: HttpRequester
+          http_method: GET
+          error_handler:
+            type: CompositeErrorHandler
+            error_handlers:
+              - type: DefaultErrorHandler
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: IGNORE
+                    predicate: "{{ response.status == 409 and response.detail == 'Invalid page provided' }}"
+                    http_codes: []
+                    error_message: "Track's inappropriate 409 for page numbers too high. Nothing to do but continue to work with the vendor."
+              - type: DefaultErrorHandler
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: IGNORE
+                    predicate: "{{ response.status == 404 }}"
+                    http_codes: []
+                    error_message: "Track's 404 for a nonexistent resource endpoint. It is no issue if there is no data."
+              - type: DefaultErrorHandler
+                max_retries: 3
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: RATE_LIMITED
+                    predicate: "{{ response.status == 429 }}"
+                    http_codes: []
+                    error_message: "Track rate limit (10,000 requests per 5 minutes) met, waiting 5 minutes and 5 seconds to reset."
+                backoff_strategies:
+                  - type: ConstantBackoffStrategy
+                    backoff_time_in_seconds: 305
+          request_headers:
+            accept: application/json
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - _embedded
+              - logs
+        partition_router:
+          type: SubstreamPartitionRouter
+          parent_stream_configs:
+            - type: ParentStreamConfig
+              stream:
+                $ref: "#/definitions/streams/reservations_all_parent"
+              parent_key: id
+              partition_field: reservation_id
+      primary_key:
+        - reservation_id
+        - id
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/reservations_logs"
+      transformations:
+        - type: AddFields
+          fields:
+            - type: AddedFieldDefinition
+              path:
+                - reservation_id
+              value: "{{ stream_partition.reservation_id }}"
+              value_type: integer
+        - type: RemoveFields
+          field_pointers:
+            - - _links
+        - $ref: "#/definitions/record_md5_transformation"
+    reservations_notes:
+      type: DeclarativeStream
+      name: reservations_notes
+      retriever:
+        type: SimpleRetriever
+        decoder:
+          type: JsonDecoder
+        paginator:
+          type: DefaultPaginator
+          page_size_option:
+            type: RequestOption
+            field_name: size
+            inject_into: request_parameter
+          page_token_option:
+            type: RequestOption
+            field_name: page
+            inject_into: request_parameter
+          pagination_strategy:
+            type: PageIncrement
+            page_size: 100
+            start_from_page: 1
+        requester:
+          $ref: "#/definitions/base_requester"
+          path: "pms/reservations/{{ stream_partition.reservation_id }}/notes"
+          type: HttpRequester
+          http_method: GET
+          error_handler:
+            type: CompositeErrorHandler
+            error_handlers:
+              - type: DefaultErrorHandler
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: IGNORE
+                    predicate: "{{ response.status == 409 and response.detail == 'Invalid page provided' }}"
+                    http_codes: []
+                    error_message: "Track's inappropriate 409 for page numbers too high. Nothing to do but continue to work with the vendor."
+              - type: DefaultErrorHandler
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: IGNORE
+                    predicate: "{{ response.status == 404 }}"
+                    http_codes: []
+                    error_message: "Track's 404 for a nonexistent resource endpoint. It is no issue if there is no data."
+              - type: DefaultErrorHandler
+                max_retries: 3
+                response_filters:
+                  - type: HttpResponseFilter
+                    action: RATE_LIMITED
+                    predicate: "{{ response.status == 429 }}"
+                    http_codes: []
+                    error_message: "Track rate limit (10,000 requests per 5 minutes) met, waiting 5 minutes and 5 seconds to reset."
+                backoff_strategies:
+                  - type: ConstantBackoffStrategy
+                    backoff_time_in_seconds: 305
+          request_headers:
+            accept: application/json
+        record_selector:
+          type: RecordSelector
+          extractor:
+            type: DpathExtractor
+            field_path:
+              - _embedded
+              - notes
+        partition_router:
+          type: SubstreamPartitionRouter
+          parent_stream_configs:
+            - type: ParentStreamConfig
+              stream:
+                $ref: "#/definitions/streams/reservations_all_parent"
+              parent_key: id
+              partition_field: reservation_id
+      primary_key:
+        - reservation_id
+        - id
+      schema_loader:
+        type: InlineSchemaLoader
+        schema:
+          $ref: "#/schemas/reservations_notes"
+      transformations:
+        - type: AddFields
+          fields:
+            - type: AddedFieldDefinition
+              path:
+                - reservation_id
+              value: "{{ stream_partition.reservation_id }}"
+              value_type: integer
+        - type: RemoveFields
+          field_pointers:
+            - - _links
+        - $ref: "#/definitions/record_md5_transformation"
   base_requester:
     type: HttpRequester
     url_base: https://{{ config.customer_domain }}/api/
@@ -6867,6 +7311,24 @@ definitions:
       password: "{{ config[\"api_secret\"] }}"
       username: "{{ config[\"api_key\"] }}"
 
+  record_md5_property:
+    type:
+      - string
+      - "null"
+  record_md5_transformation:
+    type: AddFields
+    fields:
+      - type: AddedFieldDefinition
+        path:
+          - _airbyte_record_md5
+        value: "{{ record | hash('md5') }}"
+  scroll_expired_error_handler:
+    type: DefaultErrorHandler
+    response_filters:
+      - type: HttpResponseFilter
+        action: RESET_PAGINATION
+        predicate: "{{ response.status == 422 and response.detail == 'Scroll ID has expired.' }}"
+        http_codes: []
 streams:
   - $ref: "#/definitions/streams/accounting_accounts"
   - $ref: "#/definitions/streams/accounting_bills"
@@ -6906,6 +7368,7 @@ streams:
   - $ref: "#/definitions/streams/maintenance_problems"
   - $ref: "#/definitions/streams/maintenance_work_orders"
   - $ref: "#/definitions/streams/nodes"
+  - $ref: "#/definitions/streams/nodes_availability"
   - $ref: "#/definitions/streams/nodes_types"
   - $ref: "#/definitions/streams/owners"
   - $ref: "#/definitions/streams/owners_contracts"
@@ -6917,11 +7380,15 @@ streams:
   - $ref: "#/definitions/streams/quotes"
   - $ref: "#/definitions/streams/rate_types"
   - $ref: "#/definitions/streams/reservations"
+  - $ref: "#/definitions/streams/reservations_all_parent"
+  - $ref: "#/definitions/streams/reservations_booking_fees"
   - $ref: "#/definitions/streams/reservations_cancellation_policies"
   - $ref: "#/definitions/streams/reservations_cancellation_reasons"
   - $ref: "#/definitions/streams/reservations_discount_reasons"
   - $ref: "#/definitions/streams/reservations_fees"
   - $ref: "#/definitions/streams/reservations_guarantee_policies"
+  - $ref: "#/definitions/streams/reservations_logs"
+  - $ref: "#/definitions/streams/reservations_notes"
   - $ref: "#/definitions/streams/reservations_tags"
   - $ref: "#/definitions/streams/reservations_types"
   - $ref: "#/definitions/streams/reservations_v2"
@@ -6936,15 +7403,14 @@ streams:
   - $ref: "#/definitions/streams/units"
   - $ref: "#/definitions/streams/units_amenities"
   - $ref: "#/definitions/streams/units_amenity_groups"
+  - $ref: "#/definitions/streams/units_availability"
   - $ref: "#/definitions/streams/units_bed_types"
   - $ref: "#/definitions/streams/units_blocks"
   - $ref: "#/definitions/streams/units_channel"
-  - $ref: "#/definitions/streams/units_daily_pricing_parent"
   - $ref: "#/definitions/streams/units_daily_pricing_v2"
   - $ref: "#/definitions/streams/units_taxes"
   - $ref: "#/definitions/streams/units_taxes_parent"
   - $ref: "#/definitions/streams/units_types"
-  - $ref: "#/definitions/streams/units_types_daily_pricing_parent"
   - $ref: "#/definitions/streams/units_types_daily_pricing_v2"
   - $ref: "#/definitions/streams/users"
   - $ref: "#/definitions/streams/users_pii_redacted"
@@ -7603,6 +8069,8 @@ schemas:
   housekeeping_zones:
     type: object
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -7640,6 +8108,8 @@ schemas:
   reservations_fees:
     type: object
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       chargeId:
@@ -7718,6 +8188,8 @@ schemas:
   reservations_tags:
     type: object
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -7769,6 +8241,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       description:
         type:
           - string
@@ -7810,6 +8284,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -8119,6 +8595,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -9423,6 +9901,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -9532,6 +10012,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       area:
@@ -9989,6 +10471,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -10054,6 +10538,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -10215,6 +10701,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -10567,6 +11055,8 @@ schemas:
       - id
       - updatedAt
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -10775,6 +11265,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       lead:
@@ -12969,6 +13461,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -13332,6 +13826,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       handle:
@@ -13517,6 +14013,8 @@ schemas:
       - id
       - updatedAt
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       fax:
@@ -13736,6 +14234,8 @@ schemas:
       - id
       - updatedAt
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -13896,6 +14396,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -14002,6 +14504,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       description:
         type:
           - string
@@ -14087,6 +14591,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -14160,6 +14666,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -14402,6 +14910,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       description:
         type:
           - string
@@ -14457,6 +14967,8 @@ schemas:
       - folio_id
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -14488,6 +15000,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -14562,6 +15076,8 @@ schemas:
       - group_id
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       description:
         type:
           - string
@@ -14605,6 +15121,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       description:
         type:
           - string
@@ -14666,6 +15184,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       description:
         type:
           - string
@@ -14900,6 +15420,8 @@ schemas:
       - unit_id
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       taxId:
@@ -14927,6 +15449,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       area:
@@ -15292,6 +15816,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -15584,6 +16110,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -15670,6 +16198,8 @@ schemas:
       - ownerId
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       unitId:
@@ -15726,6 +16256,8 @@ schemas:
       - id
       - updatedAt
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       user:
@@ -17463,6 +17995,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       description:
         type:
           - string
@@ -17508,6 +18042,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       notes:
@@ -17797,6 +18333,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -17898,6 +18436,12 @@ schemas:
       - group_id
       - id
     properties:
+      unit_id:
+        type:
+          - number
+          - "null"
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       unitId:
@@ -17937,6 +18481,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       code:
@@ -17998,6 +18544,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -18068,6 +18616,8 @@ schemas:
       - unit_id
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       description:
         type:
           - string
@@ -19189,6 +19739,8 @@ schemas:
       - id
       - updatedAt
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       user:
@@ -20714,6 +21266,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -20788,6 +21342,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -20841,6 +21397,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -21337,6 +21895,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       description:
         type:
           - string
@@ -21410,6 +21970,8 @@ schemas:
     required:
       - group_id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       fee:
         type:
           - string
@@ -21450,6 +22012,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -21556,6 +22120,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       net:
@@ -21698,6 +22264,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -21979,6 +22547,8 @@ schemas:
       - contactId
       - companyId
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       _embedded:
         type:
           - object
@@ -22007,6 +22577,8 @@ schemas:
       - fraction_id
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       shares:
@@ -22066,6 +22638,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       description:
         type:
           - string
@@ -22223,6 +22797,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       area:
@@ -22680,6 +23256,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -22745,6 +23323,44 @@ schemas:
     required:
       - id
     properties:
+      parent:
+        type:
+          - object
+          - "null"
+      currency:
+        type:
+          - object
+          - "null"
+      checkSetup:
+        type:
+          - object
+          - "null"
+      externalId:
+        type:
+          - object
+          - "null"
+      verifiedAt:
+        type:
+          - object
+          - "null"
+      stakeholder:
+        type:
+          - object
+          - "null"
+      externalName:
+        type:
+          - object
+          - "null"
+      dwollaCustomer:
+        type:
+          - object
+          - "null"
+      connectionStatus:
+        type:
+          - object
+          - "null"
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       description:
         type:
           - string
@@ -22902,6 +23518,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       memo:
@@ -22959,6 +23577,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -25275,6 +25895,8 @@ schemas:
       - id
       - updatedAt
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -25483,6 +26105,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -25496,6 +26120,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       reason:
@@ -25533,6 +26159,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -25563,6 +26191,8 @@ schemas:
       - id
       - updatedAt
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       fax:
@@ -25782,6 +26412,8 @@ schemas:
       - fraction_id
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       owner:
@@ -28170,6 +28802,8 @@ schemas:
       - company_id
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -28221,6 +28855,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -28323,6 +28959,8 @@ schemas:
       - unit_id
       - rateTypeId
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       rates:
         type:
           - array
@@ -28381,6 +29019,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -29048,6 +29688,8 @@ schemas:
       - id
       - updatedAt
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       description:
         type:
           - string
@@ -29458,6 +30100,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -29833,6 +30477,8 @@ schemas:
       - id
       - updatedAt
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       cost:
@@ -30127,6 +30773,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -30238,469 +30886,14 @@ schemas:
           - boolean
           - "null"
     additionalProperties: true
-  units_daily_pricing_parent:
-    type: object
-    $schema: http://json-schema.org/schema#
-    required:
-      - id
-    properties:
-      id:
-        type: number
-      area:
-        type:
-          - number
-          - "null"
-      name:
-        type:
-          - string
-          - "null"
-      phone:
-        type:
-          - string
-          - "null"
-      roles:
-        type:
-          - array
-          - "null"
-        items:
-          type:
-            - object
-            - "null"
-          properties:
-            roleId:
-              type:
-                - number
-                - "null"
-            userId:
-              type:
-                - number
-                - "null"
-      taxId:
-        type:
-          - string
-          - "null"
-      custom:
-        type:
-          - object
-          - "null"
-        properties:
-          pms_units_ski_locker:
-            type:
-              - string
-              - "null"
-          pms_units_owner_notes:
-            type:
-              - string
-              - "null"
-          pms_units_hyatt_message:
-            type:
-              - string
-              - "null"
-          pms_units_source_unit_id:
-            type:
-              - string
-              - "null"
-          pms_units_wifi_information:
-            type:
-              - string
-              - "null"
-          pms_units_hbr_hapuna_access:
-            type:
-              - string
-              - "null"
-          pms_units_touchstay_guide_link:
-            type:
-              - string
-              - "null"
-          pms_units_unit_driving_directions:
-            type:
-              - object
-              - "null"
-          pms_units_experience_aloha_guest_credit:
-            type:
-              - string
-              - "null"
-          pms_units_unit_instructions_guest_facing:
-            type:
-              - string
-              - "null"
-      floors:
-        type:
-          - number
-          - "null"
-      nodeId:
-        type:
-          - number
-          - "null"
-      postal:
-        type:
-          - string
-          - "null"
-      region:
-        type:
-          - string
-          - "null"
-      typeId:
-        type:
-          - number
-          - "null"
-      country:
-        type:
-          - string
-          - "null"
-      maxPets:
-        type:
-          - number
-          - "null"
-      bedTypes:
-        type:
-          - array
-          - "null"
-        items:
-          type:
-            - object
-            - "null"
-          properties:
-            id:
-              type:
-                - number
-                - "null"
-            name:
-              type:
-                - string
-                - "null"
-            count:
-              type:
-                - number
-                - "null"
-      bedrooms:
-        type:
-          - number
-          - "null"
-      isActive:
-        type:
-          - boolean
-          - "null"
-      latitude:
-        type:
-          - string
-          - "null"
-      locality:
-        type:
-          - string
-          - "null"
-      systemId:
-        type:
-          - object
-          - "null"
-      timezone:
-        type:
-          - string
-          - "null"
-      unitCode:
-        type:
-          - string
-          - "null"
-      _embedded:
-        type:
-          - object
-          - "null"
-        properties:
-          housekeepingZone:
-            type:
-              - object
-              - "null"
-            properties:
-              type:
-                type:
-                  - string
-                  - "null"
-              id:
-                type:
-                  - number
-                  - "null"
-              name:
-                type:
-                  - string
-                  - "null"
-              _links:
-                type:
-                  - object
-                  - "null"
-                properties:
-                  self:
-                    type:
-                      - object
-                      - "null"
-                    properties:
-                      href:
-                        type:
-                          - string
-                          - "null"
-              isActive:
-                type:
-                  - boolean
-                  - "null"
-              createdAt:
-                type:
-                  - string
-                  - "null"
-              createdBy:
-                type:
-                  - string
-                  - "null"
-              updatedAt:
-                type:
-                  - string
-                  - "null"
-              updatedBy:
-                type:
-                  - string
-                  - "null"
-      createdAt:
-        type:
-          - string
-          - "null"
-      createdBy:
-        type:
-          - string
-          - "null"
-      isLimited:
-        type:
-          - boolean
-          - "null"
-      longitude:
-        type:
-          - string
-          - "null"
-      shortName:
-        type:
-          - string
-          - "null"
-      updatedAt:
-        type:
-          - string
-          - "null"
-      updatedBy:
-        type:
-          - string
-          - "null"
-      composites:
-        type:
-          - array
-          - "null"
-        items:
-          type:
-            - object
-            - "null"
-          properties:
-            type:
-              type:
-                - string
-                - "null"
-            unitId:
-              type:
-                - number
-                - "null"
-      coverImage:
-        type:
-          - object
-          - "null"
-      isBookable:
-        type:
-          - boolean
-          - "null"
-      websiteUrl:
-        type:
-          - string
-          - "null"
-      checkinTime:
-        type:
-          - string
-          - "null"
-      gatewaysIds:
-        type:
-          - array
-          - "null"
-      maxDiscount:
-        type:
-          - object
-          - "null"
-      petFriendly:
-        type:
-          - boolean
-          - "null"
-      useBedTypes:
-        type:
-          - boolean
-          - "null"
-      amenitiesIds:
-        type:
-          - array
-          - "null"
-      checkoutTime:
-        type:
-          - string
-          - "null"
-      documentsIds:
-        type:
-          - array
-          - "null"
-      isAccessible:
-        type:
-          - boolean
-          - "null"
-      maxOccupancy:
-        type:
-          - number
-          - "null"
-      quickCheckin:
-        type:
-          - boolean
-          - "null"
-      systemAppend:
-        type:
-          - object
-          - "null"
-      cleanStatusId:
-        type:
-          - number
-          - "null"
-      eventsAllowed:
-        type:
-          - boolean
-          - "null"
-      fullBathrooms:
-        type:
-          - number
-          - "null"
-      halfBathrooms:
-        type:
-          - number
-          - "null"
-      localOfficeId:
-        type:
-          - number
-          - "null"
-      lodgingTypeId:
-        type:
-          - number
-          - "null"
-      quickCheckout:
-        type:
-          - boolean
-          - "null"
-      streetAddress:
-        type:
-          - string
-          - "null"
-      taxDistrictId:
-        type:
-          - number
-          - "null"
-      folioException:
-        type:
-          - boolean
-          - "null"
-      smokingAllowed:
-        type:
-          - boolean
-          - "null"
-      childrenAllowed:
-        type:
-          - boolean
-          - "null"
-      extendedAddress:
-        type:
-          - string
-          - "null"
-      hasEarlyCheckin:
-        type:
-          - boolean
-          - "null"
-      hasLateCheckout:
-        type:
-          - boolean
-          - "null"
-      maintenanceStop:
-        type:
-          - object
-          - "null"
-      minimumAgeLimit:
-        type:
-          - number
-          - "null"
-      securityDeposit:
-        type:
-          - string
-          - "null"
-      earlyCheckinTime:
-        type:
-          - string
-          - "null"
-      housekeepingStop:
-        type:
-          - object
-          - "null"
-      lateCheckoutTime:
-        type:
-          - string
-          - "null"
-      availabilityOrder:
-        type:
-          - number
-          - "null"
-      housekeepingNotes:
-        type:
-          - string
-          - "null"
-      maintenanceZoneId:
-        type:
-          - object
-          - "null"
-      housekeepingZoneId:
-        type:
-          - number
-          - "null"
-      maintenanceMessage:
-        type:
-          - string
-          - "null"
-      housekeepingMessage:
-        type:
-          - string
-          - "null"
-      guaranteePoliciesIds:
-        type:
-          - array
-          - "null"
-      insuranceProductsIds:
-        type:
-          - array
-          - "null"
-      useRoomConfiguration:
-        type:
-          - boolean
-          - "null"
-      threeQuarterBathrooms:
-        type:
-          - number
-          - "null"
-      cancellationPoliciesIds:
-        type:
-          - array
-          - "null"
-      travelInsuranceProductId:
-        type:
-          - number
-          - "null"
-    additionalProperties: true
   accounting_deposits_payments:
     type: object
     $schema: http://json-schema.org/schema#
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -30763,6 +30956,8 @@ schemas:
       - unit_type_id
       - rateTypeId
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       rates:
         type:
           - array
@@ -30821,6 +31016,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -30859,6 +31056,8 @@ schemas:
       - statement_id
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -32073,6 +32272,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       type:
         type:
           - string
@@ -32229,377 +32430,14 @@ schemas:
           - boolean
           - "null"
     additionalProperties: true
-  units_types_daily_pricing_parent:
-    type: object
-    $schema: http://json-schema.org/schema#
-    required:
-      - id
-    properties:
-      id:
-        type: number
-      area:
-        type:
-          - number
-          - "null"
-      name:
-        type:
-          - string
-          - "null"
-      phone:
-        type:
-          - object
-          - "null"
-      roles:
-        type:
-          - object
-          - "null"
-      custom:
-        anyOf:
-          - type: array
-          - type:
-              - object
-              - "null"
-            properties:
-              pms_unit_types_owner_notes:
-                type:
-                  - object
-                  - "null"
-              pms_unit_types_pre_arrival_info:
-                type:
-                  - string
-                  - "null"
-      floors:
-        type:
-          - object
-          - "null"
-      nodeId:
-        type:
-          - object
-          - "null"
-      postal:
-        type:
-          - object
-          - "null"
-      region:
-        type:
-          - object
-          - "null"
-      country:
-        type:
-          - object
-          - "null"
-      maxPets:
-        type:
-          - object
-          - "null"
-      updated:
-        type:
-          - object
-          - "null"
-        properties:
-          content:
-            type:
-              - string
-              - "null"
-          pricing:
-            type:
-              - string
-              - "null"
-          availability:
-            type:
-              - string
-              - "null"
-      bedTypes:
-        type:
-          - object
-          - "null"
-      bedrooms:
-        type:
-          - number
-          - "null"
-      isActive:
-        type:
-          - boolean
-          - "null"
-      latitude:
-        type:
-          - object
-          - "null"
-      locality:
-        type:
-          - object
-          - "null"
-      timezone:
-        type:
-          - object
-          - "null"
-      typeCode:
-        type:
-          - string
-          - "null"
-      _embedded:
-        type:
-          - object
-          - "null"
-        properties:
-          calendarGroup:
-            type:
-              - object
-              - "null"
-            properties:
-              id:
-                type:
-                  - number
-                  - "null"
-              name:
-                type:
-                  - string
-                  - "null"
-              _links:
-                type:
-                  - object
-                  - "null"
-                properties:
-                  self:
-                    type:
-                      - object
-                      - "null"
-                    properties:
-                      href:
-                        type:
-                          - string
-                          - "null"
-              createdAt:
-                type:
-                  - string
-                  - "null"
-              createdBy:
-                type:
-                  - string
-                  - "null"
-              updatedAt:
-                type:
-                  - string
-                  - "null"
-              updatedBy:
-                type:
-                  - string
-                  - "null"
-      createdAt:
-        type:
-          - string
-          - "null"
-      createdBy:
-        type:
-          - string
-          - "null"
-      longitude:
-        type:
-          - object
-          - "null"
-      shortName:
-        type:
-          - string
-          - "null"
-      updatedAt:
-        type:
-          - string
-          - "null"
-      updatedBy:
-        type:
-          - string
-          - "null"
-      isBookable:
-        type:
-          - boolean
-          - "null"
-      websiteUrl:
-        type:
-          - object
-          - "null"
-      checkinTime:
-        type:
-          - object
-          - "null"
-      gatewaysIds:
-        type:
-          - object
-          - "null"
-      maxDiscount:
-        type:
-          - object
-          - "null"
-      petFriendly:
-        type:
-          - boolean
-          - "null"
-      useBedTypes:
-        type:
-          - boolean
-          - "null"
-      amenitiesIds:
-        type:
-          - array
-          - "null"
-      checkoutTime:
-        type:
-          - object
-          - "null"
-      documentsIds:
-        type:
-          - object
-          - "null"
-      isAccessible:
-        type:
-          - boolean
-          - "null"
-      maxOccupancy:
-        type:
-          - number
-          - "null"
-      quickCheckin:
-        type:
-          - boolean
-          - "null"
-      allowOversell:
-        type:
-          - boolean
-          - "null"
-      eventsAllowed:
-        type:
-          - boolean
-          - "null"
-      fullBathrooms:
-        type:
-          - object
-          - "null"
-      halfBathrooms:
-        type:
-          - object
-          - "null"
-      localOfficeId:
-        type:
-          - object
-          - "null"
-      lodgingTypeId:
-        type:
-          - number
-          - "null"
-      oversellLimit:
-        type:
-          - number
-          - "null"
-      quickCheckout:
-        type:
-          - boolean
-          - "null"
-      streetAddress:
-        type:
-          - object
-          - "null"
-      taxDistrictId:
-        type:
-          - object
-          - "null"
-      allowUnitRates:
-        type:
-          - boolean
-          - "null"
-      folioException:
-        type:
-          - boolean
-          - "null"
-      smokingAllowed:
-        type:
-          - boolean
-          - "null"
-      calendarGroupId:
-        type:
-          - number
-          - "null"
-      childrenAllowed:
-        type:
-          - boolean
-          - "null"
-      extendedAddress:
-        type:
-          - object
-          - "null"
-      hasEarlyCheckin:
-        type:
-          - boolean
-          - "null"
-      hasLateCheckout:
-        type:
-          - boolean
-          - "null"
-      minimumAgeLimit:
-        type:
-          - object
-          - "null"
-      securityDeposit:
-        type:
-          - string
-          - "null"
-      earlyCheckinTime:
-        type:
-          - object
-          - "null"
-      lateCheckoutTime:
-        type:
-          - object
-          - "null"
-      housekeepingNotes:
-        type:
-          - object
-          - "null"
-      maintenanceZoneId:
-        type:
-          - object
-          - "null"
-      housekeepingZoneId:
-        type:
-          - object
-          - "null"
-      maintenanceMessage:
-        type:
-          - object
-          - "null"
-      housekeepingMessage:
-        type:
-          - object
-          - "null"
-      guaranteePoliciesIds:
-        type:
-          - object
-          - "null"
-      insuranceProductsIds:
-        type:
-          - object
-          - "null"
-      useRoomConfiguration:
-        type:
-          - boolean
-          - "null"
-      threeQuarterBathrooms:
-        type:
-          - object
-          - "null"
-      cancellationPoliciesIds:
-        type:
-          - object
-          - "null"
-      travelInsuranceProductId:
-        type:
-          - object
-          - "null"
-    additionalProperties: true
   reservations_cancellation_reasons:
     type: object
     $schema: http://json-schema.org/schema#
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       name:
@@ -32657,6 +32495,8 @@ schemas:
     required:
       - id
     properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
       id:
         type: number
       code:
@@ -32869,4 +32709,2020 @@ schemas:
         type:
           - number
           - "null"
+    additionalProperties: true
+  nodes_availability:
+    type: object
+    $schema: "http://json-schema.org/schema#"
+    required:
+      - node_id
+      - date
+    properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
+      date:
+        type: string
+      count:
+        type:
+          - number
+          - "null"
+      total:
+        type:
+          - number
+          - "null"
+      node_id:
+        type: number
+    additionalProperties: true
+  units_availability:
+    type: object
+    $schema: "http://json-schema.org/schema#"
+    required:
+      - unit_id
+      - date
+    properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
+      date:
+        type: string
+      count:
+        type:
+          - number
+          - "null"
+      unit_id:
+        type: number
+    additionalProperties: true
+  reservations_all_parent:
+    type: object
+    $schema: "http://json-schema.org/schema#"
+    required:
+      - id
+      - updatedAt
+    properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
+      id:
+        type: number
+      user:
+        type:
+          - object
+          - "null"
+      uuid:
+        type:
+          - string
+          - "null"
+      group:
+        type:
+          - object
+          - "null"
+      nights:
+        type:
+          - number
+          - "null"
+      source:
+        type:
+          - string
+          - "null"
+      status:
+        type:
+          - string
+          - "null"
+      typeId:
+        type:
+          - number
+          - "null"
+      unitId:
+        type:
+          - number
+          - "null"
+      userId:
+        type:
+          - number
+          - "null"
+      altConf:
+        type:
+          - string
+          - "null"
+      channel:
+        type:
+          - object
+          - "null"
+      folioId:
+        type:
+          - number
+          - "null"
+      groupId:
+        type:
+          - number
+          - "null"
+      softEnd:
+        type:
+          - string
+          - "null"
+      bookedAt:
+        type:
+          - string
+          - "null"
+      campaign:
+        type:
+          - object
+          - "null"
+      unitType:
+        type:
+          - object
+          - "null"
+      _embedded:
+        type:
+          - object
+          - "null"
+        properties:
+          folio:
+            type:
+              - object
+              - "null"
+            properties:
+              type:
+                type:
+                  - string
+                  - "null"
+              id:
+                type:
+                  - number
+                  - "null"
+              name:
+                type:
+                  - string
+                  - "null"
+              _links:
+                type:
+                  - object
+                  - "null"
+                properties:
+                  self:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      href:
+                        type:
+                          - string
+                          - "null"
+              status:
+                type:
+                  - string
+                  - "null"
+              company:
+                type:
+                  - object
+                  - "null"
+              endDate:
+                type:
+                  - string
+                  - "null"
+              posAllow:
+                type:
+                  - boolean
+                  - "null"
+              posLimit:
+                type:
+                  - string
+                  - "null"
+              _embedded:
+                type:
+                  - object
+                  - "null"
+                properties:
+                  account:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      _links:
+                        type:
+                          - object
+                          - "null"
+                        properties:
+                          self:
+                            type:
+                              - object
+                              - "null"
+                            properties:
+                              href:
+                                type:
+                                  - string
+                                  - "null"
+                  contact:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      _links:
+                        type:
+                          - object
+                          - "null"
+                        properties:
+                          self:
+                            type:
+                              - object
+                              - "null"
+                            properties:
+                              href:
+                                type:
+                                  - string
+                                  - "null"
+                  masterFolio:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      _links:
+                        type:
+                          - object
+                          - "null"
+                        properties:
+                          self:
+                            type:
+                              - object
+                              - "null"
+                            properties:
+                              href:
+                                type:
+                                  - string
+                                  - "null"
+                  reservation:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      _links:
+                        type:
+                          - object
+                          - "null"
+                        properties:
+                          self:
+                            type:
+                              - object
+                              - "null"
+                            properties:
+                              href:
+                                type:
+                                  - string
+                                  - "null"
+                  travelAgent:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      _links:
+                        type:
+                          - object
+                          - "null"
+                        properties:
+                          self:
+                            type:
+                              - object
+                              - "null"
+                            properties:
+                              href:
+                                type:
+                                  - string
+                                  - "null"
+                  masterFolioRule:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      _links:
+                        type:
+                          - object
+                          - "null"
+                        properties:
+                          self:
+                            type:
+                              - object
+                              - "null"
+                            properties:
+                              href:
+                                type:
+                                  - string
+                                  - "null"
+              accountId:
+                type:
+                  - number
+                  - "null"
+              companyId:
+                type:
+                  - object
+                  - "null"
+              contactId:
+                type:
+                  - number
+                  - "null"
+              createdAt:
+                type:
+                  - string
+                  - "null"
+              createdBy:
+                type:
+                  - string
+                  - "null"
+              startDate:
+                type:
+                  - string
+                  - "null"
+              taxExempt:
+                type:
+                  - boolean
+                  - "null"
+              updatedAt:
+                type:
+                  - string
+                  - "null"
+              updatedBy:
+                type:
+                  - string
+                  - "null"
+              closedDate:
+                type:
+                  - string
+                  - "null"
+              checkInDate:
+                type:
+                  - string
+                  - "null"
+              masterFolio:
+                type:
+                  - object
+                  - "null"
+              travelAgent:
+                type:
+                  - object
+                  - "null"
+              checkOutDate:
+                type:
+                  - string
+                  - "null"
+              hasException:
+                type:
+                  - boolean
+                  - "null"
+              ownerRevenue:
+                type:
+                  - string
+                  - "null"
+              generatedName:
+                type:
+                  - string
+                  - "null"
+              masterFolioId:
+                type:
+                  - number
+                  - "null"
+              reservationId:
+                type:
+                  - number
+                  - "null"
+              travelAgentId:
+                type:
+                  - number
+                  - "null"
+              currentBalance:
+                type:
+                  - string
+                  - "null"
+              agentCommission:
+                type:
+                  - string
+                  - "null"
+              masterFolioRule:
+                type:
+                  - object
+                  - "null"
+              ownerCommission:
+                type:
+                  - string
+                  - "null"
+              realizedBalance:
+                type:
+                  - string
+                  - "null"
+              exceptionMessage:
+                type:
+                  - object
+                  - "null"
+              masterFolioRuleId:
+                type:
+                  - number
+                  - "null"
+          group:
+            type:
+              - object
+              - "null"
+            properties:
+              type:
+                type:
+                  - string
+                  - "null"
+              id:
+                type:
+                  - number
+                  - "null"
+              code:
+                type:
+                  - string
+                  - "null"
+              name:
+                type:
+                  - string
+                  - "null"
+              _links:
+                type:
+                  - object
+                  - "null"
+                properties:
+                  self:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      href:
+                        type:
+                          - string
+                          - "null"
+              status:
+                type:
+                  - string
+                  - "null"
+              company:
+                type:
+                  - object
+                  - "null"
+              contact:
+                type:
+                  - object
+                  - "null"
+              endDate:
+                type:
+                  - string
+                  - "null"
+              campaign:
+                type:
+                  - object
+                  - "null"
+              dropDate:
+                type:
+                  - string
+                  - "null"
+              posAllow:
+                type:
+                  - boolean
+                  - "null"
+              posLimit:
+                type:
+                  - object
+                  - "null"
+              _embedded:
+                type:
+                  - object
+                  - "null"
+                properties:
+                  account:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      _links:
+                        type:
+                          - object
+                          - "null"
+                        properties:
+                          self:
+                            type:
+                              - object
+                              - "null"
+                            properties:
+                              href:
+                                type:
+                                  - string
+                                  - "null"
+                  company:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      _links:
+                        type:
+                          - object
+                          - "null"
+                        properties:
+                          self:
+                            type:
+                              - object
+                              - "null"
+                            properties:
+                              href:
+                                type:
+                                  - string
+                                  - "null"
+                  contact:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      _links:
+                        type:
+                          - object
+                          - "null"
+                        properties:
+                          self:
+                            type:
+                              - object
+                              - "null"
+                            properties:
+                              href:
+                                type:
+                                  - string
+                                  - "null"
+                  rateType:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      _links:
+                        type:
+                          - object
+                          - "null"
+                        properties:
+                          self:
+                            type:
+                              - object
+                              - "null"
+                            properties:
+                              href:
+                                type:
+                                  - string
+                                  - "null"
+                  promoCode:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      _links:
+                        type:
+                          - object
+                          - "null"
+                        properties:
+                          self:
+                            type:
+                              - object
+                              - "null"
+                            properties:
+                              href:
+                                type:
+                                  - string
+                                  - "null"
+                  travelAgent:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      _links:
+                        type:
+                          - object
+                          - "null"
+                        properties:
+                          self:
+                            type:
+                              - object
+                              - "null"
+                            properties:
+                              href:
+                                type:
+                                  - string
+                                  - "null"
+                  reservationType:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      _links:
+                        type:
+                          - object
+                          - "null"
+                        properties:
+                          self:
+                            type:
+                              - object
+                              - "null"
+                            properties:
+                              href:
+                                type:
+                                  - string
+                                  - "null"
+              accountId:
+                type:
+                  - number
+                  - "null"
+              companyId:
+                type:
+                  - number
+                  - "null"
+              contactId:
+                type:
+                  - number
+                  - "null"
+              createdAt:
+                type:
+                  - string
+                  - "null"
+              createdBy:
+                type:
+                  - string
+                  - "null"
+              promoCode:
+                type:
+                  - object
+                  - "null"
+              startDate:
+                type:
+                  - string
+                  - "null"
+              taxExempt:
+                type:
+                  - boolean
+                  - "null"
+              updatedAt:
+                type:
+                  - string
+                  - "null"
+              updatedBy:
+                type:
+                  - string
+                  - "null"
+              campaignId:
+                type:
+                  - object
+                  - "null"
+              closedDate:
+                type:
+                  - string
+                  - "null"
+              rateTypeId:
+                type:
+                  - number
+                  - "null"
+              promoCodeId:
+                type:
+                  - number
+                  - "null"
+              travelAgent:
+                type:
+                  - object
+                  - "null"
+              travelAgentId:
+                type:
+                  - number
+                  - "null"
+              currentBalance:
+                type:
+                  - string
+                  - "null"
+              realizedBalance:
+                type:
+                  - string
+                  - "null"
+              reservationTypeId:
+                type:
+                  - number
+                  - "null"
+          campaign:
+            type:
+              - object
+              - "null"
+            properties:
+              description:
+                type:
+                  - string
+                  - "null"
+              id:
+                type:
+                  - number
+                  - "null"
+              url:
+                type:
+                  - string
+                  - "null"
+              name:
+                type:
+                  - string
+                  - "null"
+              tags:
+                type:
+                  - object
+                  - "null"
+              brand:
+                type:
+                  - object
+                  - "null"
+              email:
+                type:
+                  - string
+                  - "null"
+              token:
+                type:
+                  - string
+                  - "null"
+              _links:
+                type:
+                  - object
+                  - "null"
+                properties:
+                  self:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      href:
+                        type:
+                          - string
+                          - "null"
+              brandId:
+                type:
+                  - object
+                  - "null"
+              endDate:
+                type:
+                  - object
+                  - "null"
+              isActive:
+                type:
+                  - boolean
+                  - "null"
+              keywords:
+                type:
+                  - object
+                  - "null"
+              createdAt:
+                type:
+                  - string
+                  - "null"
+              createdBy:
+                type:
+                  - string
+                  - "null"
+              startDate:
+                type:
+                  - object
+                  - "null"
+              updatedAt:
+                type:
+                  - string
+                  - "null"
+              updatedBy:
+                type:
+                  - string
+                  - "null"
+              primaryNumber:
+                type:
+                  - object
+                  - "null"
+              defaultLeadType:
+                type:
+                  - object
+                  - "null"
+              primaryNumberId:
+                type:
+                  - object
+                  - "null"
+              disableRecording:
+                type:
+                  - boolean
+                  - "null"
+              defaultLeadTypeId:
+                type:
+                  - object
+                  - "null"
+          promoCode:
+            type:
+              - object
+              - "null"
+            properties:
+              description:
+                type:
+                  - string
+                  - "null"
+              id:
+                type:
+                  - number
+                  - "null"
+              code:
+                type:
+                  - string
+                  - "null"
+              name:
+                type:
+                  - string
+                  - "null"
+              _links:
+                type:
+                  - object
+                  - "null"
+                properties:
+                  self:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      href:
+                        type:
+                          - string
+                          - "null"
+              isActive:
+                type:
+                  - boolean
+                  - "null"
+              isPublic:
+                type:
+                  - boolean
+                  - "null"
+              createdAt:
+                type:
+                  - string
+                  - "null"
+              createdBy:
+                type:
+                  - string
+                  - "null"
+              updatedAt:
+                type:
+                  - string
+                  - "null"
+              updatedBy:
+                type:
+                  - string
+                  - "null"
+              discountType:
+                type:
+                  - string
+                  - "null"
+              bookingEndDate:
+                type:
+                  - string
+                  - "null"
+              dateConstraints:
+                type:
+                  - array
+                  - "null"
+                items:
+                  type:
+                    - object
+                    - "null"
+                  properties:
+                    id:
+                      type:
+                        - number
+                        - "null"
+                    dateGroup:
+                      type:
+                        - object
+                        - "null"
+                      properties:
+                        id:
+                          type:
+                            - number
+                            - "null"
+                        name:
+                          type:
+                            - string
+                            - "null"
+                        dates:
+                          type:
+                            - array
+                            - "null"
+                          items:
+                            type:
+                              - object
+                              - "null"
+                            properties:
+                              id:
+                                type:
+                                  - number
+                                  - "null"
+                              end:
+                                type:
+                                  - string
+                                  - "null"
+                              start:
+                                type:
+                                  - string
+                                  - "null"
+                    isBlackoutDates:
+                      type:
+                        - boolean
+                        - "null"
+              unitConstraints:
+                type:
+                  - array
+                  - "null"
+                items:
+                  type:
+                    - object
+                    - "null"
+                  properties:
+                    id:
+                      type:
+                        - number
+                        - "null"
+                    field:
+                      type:
+                        - string
+                        - "null"
+                    params:
+                      type:
+                        - object
+                        - "null"
+                      properties:
+                        values:
+                          type:
+                            - array
+                            - "null"
+                        operator:
+                          type:
+                            - string
+                            - "null"
+                    operand:
+                      type:
+                        - string
+                        - "null"
+              bookingStartDate:
+                type:
+                  - string
+                  - "null"
+              valueAdjustments:
+                type:
+                  - object
+                  - "null"
+                properties:
+                  type:
+                    type:
+                      - string
+                      - "null"
+                  value:
+                    type:
+                      - string
+                      - "null"
+                  numberOfStays:
+                    type:
+                      - number
+                      - "null"
+                  numberOfNights:
+                    type:
+                      - number
+                      - "null"
+                  adjustmentNights:
+                    type:
+                      - string
+                      - "null"
+                  discountConstraint:
+                    type:
+                      - string
+                      - "null"
+                  discountConstraintAmount:
+                    type:
+                      - string
+                      - "null"
+              dateConstraintType:
+                type:
+                  - string
+                  - "null"
+              constraintMaxNights:
+                type:
+                  - number
+                  - "null"
+              constraintMinNights:
+                type:
+                  - number
+                  - "null"
+              customDatesConstraint:
+                type:
+                  - array
+                  - "null"
+                items:
+                  type:
+                    - object
+                    - "null"
+                  properties:
+                    end:
+                      type:
+                        - string
+                        - "null"
+                    start:
+                      type:
+                        - string
+                        - "null"
+              stayDatesConstraintType:
+                type:
+                  - string
+                  - "null"
+              constraintMaxDaysPriorArrival:
+                type:
+                  - object
+                  - "null"
+              constraintMinDaysPriorArrival:
+                type:
+                  - number
+                  - "null"
+              customBlackoutDatesConstraint:
+                type:
+                  - array
+                  - "null"
+                items:
+                  type:
+                    - object
+                    - "null"
+                  properties:
+                    end:
+                      type:
+                        - string
+                        - "null"
+                    start:
+                      type:
+                        - string
+                        - "null"
+          travelAgent:
+            type:
+              - object
+              - "null"
+            properties:
+              type:
+                type:
+                  - string
+                  - "null"
+              id:
+                type:
+                  - number
+                  - "null"
+              fax:
+                type:
+                  - string
+                  - "null"
+              name:
+                type:
+                  - string
+                  - "null"
+              tags:
+                type:
+                  - array
+                  - "null"
+                items:
+                  type:
+                    - object
+                    - "null"
+                  properties:
+                    id:
+                      type:
+                        - number
+                        - "null"
+                    name:
+                      type:
+                        - string
+                        - "null"
+              email:
+                type:
+                  - string
+                  - "null"
+              notes:
+                type:
+                  - string
+                  - "null"
+              phone:
+                type:
+                  - string
+                  - "null"
+              taxId:
+                type:
+                  - string
+                  - "null"
+              _links:
+                type:
+                  - object
+                  - "null"
+                properties:
+                  self:
+                    type:
+                      - object
+                      - "null"
+                    properties:
+                      href:
+                        type:
+                          - string
+                          - "null"
+              postal:
+                type:
+                  - string
+                  - "null"
+              region:
+                type:
+                  - string
+                  - "null"
+              country:
+                type:
+                  - string
+                  - "null"
+              taxName:
+                type:
+                  - string
+                  - "null"
+              taxType:
+                type:
+                  - string
+                  - "null"
+              website:
+                type:
+                  - string
+                  - "null"
+              isActive:
+                type:
+                  - boolean
+                  - "null"
+              locality:
+                type:
+                  - string
+                  - "null"
+              createdAt:
+                type:
+                  - string
+                  - "null"
+              createdBy:
+                type:
+                  - string
+                  - "null"
+              updatedAt:
+                type:
+                  - string
+                  - "null"
+              updatedBy:
+                type:
+                  - string
+                  - "null"
+              paymentType:
+                type:
+                  - string
+                  - "null"
+              achVerifiedAt:
+                type:
+                  - object
+                  - "null"
+              streetAddress:
+                type:
+                  - string
+                  - "null"
+              achAccountType:
+                type:
+                  - string
+                  - "null"
+              extendedAddress:
+                type:
+                  - string
+                  - "null"
+              achAccountNumber:
+                type:
+                  - string
+                  - "null"
+              achRoutingNumber:
+                type:
+                  - string
+                  - "null"
+              glExpirationDate:
+                type:
+                  - object
+                  - "null"
+              wcExpirationDate:
+                type:
+                  - object
+                  - "null"
+              glInsurancePolicy:
+                type:
+                  - string
+                  - "null"
+              wcInsurancePolicy:
+                type:
+                  - string
+                  - "null"
+              travelAgentCommission:
+                type:
+                  - number
+                  - "null"
+              travelAgentIataNumber:
+                type:
+                  - string
+                  - "null"
+              travelAgentDeductCommission:
+                type:
+                  - boolean
+                  - "null"
+      channelId:
+        type:
+          - number
+          - "null"
+      contactId:
+        type:
+          - number
+          - "null"
+      createdAt:
+        type:
+          - string
+          - "null"
+      createdBy:
+        type:
+          - string
+          - "null"
+      isTaxable:
+        type:
+          - boolean
+          - "null"
+      occupants:
+        type:
+          - object
+          - "null"
+        properties:
+          "1":
+            type:
+              - number
+              - "null"
+          "2":
+            type:
+              - number
+              - "null"
+          "3":
+            type:
+              - number
+              - "null"
+      promoCode:
+        type:
+          - object
+          - "null"
+      softStart:
+        type:
+          - string
+          - "null"
+      updatedAt:
+        type: string
+      updatedBy:
+        type:
+          - string
+          - "null"
+      campaignId:
+        type:
+          - number
+          - "null"
+      inviteUuid:
+        type:
+          - string
+          - "null"
+      rateTypeId:
+        type:
+          - number
+          - "null"
+      subChannel:
+        type:
+          - string
+          - "null"
+      typeInline:
+        type:
+          - object
+          - "null"
+        properties:
+          id:
+            type:
+              - number
+              - "null"
+          code:
+            type:
+              - string
+              - "null"
+          name:
+            type:
+              - string
+              - "null"
+      unitCodeId:
+        type:
+          - number
+          - "null"
+      unitTypeId:
+        type:
+          - object
+          - "null"
+      arrivalDate:
+        type:
+          - string
+          - "null"
+      arrivalTime:
+        type:
+          - string
+          - "null"
+      cancelledAt:
+        type:
+          - string
+          - "null"
+      cancelledBy:
+        type:
+          - object
+          - "null"
+      promoCodeId:
+        type:
+          - number
+          - "null"
+      travelAgent:
+        type:
+          - object
+          - "null"
+      earlyArrival:
+        type:
+          - boolean
+          - "null"
+      isUnitLocked:
+        type:
+          - boolean
+          - "null"
+      cancelledById:
+        type:
+          - number
+          - "null"
+      departureDate:
+        type:
+          - string
+          - "null"
+      departureTime:
+        type:
+          - string
+          - "null"
+      lateDeparture:
+        type:
+          - boolean
+          - "null"
+      paymentMethod:
+        type:
+          - object
+          - "null"
+      travelAgentId:
+        type:
+          - number
+          - "null"
+      folioBreakdown:
+        type:
+          - object
+          - "null"
+        properties:
+          adr:
+            type:
+              - string
+              - "null"
+          fees:
+            type:
+              - array
+              - "null"
+            items:
+              type:
+                - object
+                - "null"
+              properties:
+                id:
+                  type:
+                    - number
+                    - "null"
+                label:
+                  type:
+                    - string
+                    - "null"
+                total:
+                  type:
+                    - string
+                    - "null"
+                isManual:
+                  type:
+                    - boolean
+                    - "null"
+          rates:
+            type:
+              - array
+              - "null"
+            items:
+              type:
+                - object
+                - "null"
+              properties:
+                date:
+                  type:
+                    - string
+                    - "null"
+                rate:
+                  type:
+                    - string
+                    - "null"
+                nights:
+                  type:
+                    - string
+                    - "null"
+          taxes:
+            type:
+              - array
+              - "null"
+            items:
+              type:
+                - object
+                - "null"
+              properties:
+                id:
+                  type:
+                    - string
+                    - "null"
+                name:
+                  type:
+                    - string
+                    - "null"
+                total:
+                  type:
+                    - string
+                    - "null"
+          total:
+            type:
+              - string
+              - "null"
+          balance:
+            type:
+              - string
+              - "null"
+          currency:
+            type:
+              - string
+              - "null"
+          payments:
+            type:
+              - string
+              - "null"
+          subTotal:
+            type:
+              - string
+              - "null"
+          insurance:
+            type:
+              - string
+              - "null"
+          totalFees:
+            type:
+              - string
+              - "null"
+          totalRent:
+            type:
+              - string
+              - "null"
+          transfers:
+            type:
+              - string
+              - "null"
+          chargelist:
+            anyOf:
+              - type:
+                  - array
+                  - "null"
+              - type:
+                  - object
+                  - "null"
+          grandTotal:
+            type:
+              - string
+              - "null"
+          totalTaxes:
+            type:
+              - string
+              - "null"
+          totalCharges:
+            type:
+              - string
+              - "null"
+          rentFeeSubtotal:
+            type:
+              - string
+              - "null"
+          totalManualFees:
+            type:
+              - string
+              - "null"
+          totalManualRent:
+            type:
+              - string
+              - "null"
+      holdExpiration:
+        type:
+          - string
+          - "null"
+      isUnitAssigned:
+        type:
+          - boolean
+          - "null"
+      ownerBreakdown:
+        type:
+          - object
+          - "null"
+        properties:
+          grossRent:
+            type:
+              - string
+              - "null"
+          feeRevenue:
+            type:
+              - string
+              - "null"
+          netRevenue:
+            type:
+              - string
+              - "null"
+          grossRevenue:
+            type:
+              - string
+              - "null"
+          agentCommission:
+            type:
+              - string
+              - "null"
+          managerCommission:
+            type:
+              - string
+              - "null"
+      quoteBreakdown:
+        type:
+          - object
+          - "null"
+        properties:
+          adr:
+            type:
+              - string
+              - "null"
+          fees:
+            type:
+              - array
+              - "null"
+            items:
+              type:
+                - object
+                - "null"
+              properties:
+                id:
+                  type:
+                    - number
+                    - "null"
+                label:
+                  type:
+                    - string
+                    - "null"
+                value:
+                  type:
+                    - string
+                    - "null"
+                display:
+                  type:
+                    - string
+                    - "null"
+                quantity:
+                  type:
+                    - number
+                    - "null"
+                unitRate:
+                  type:
+                    - string
+                    - "null"
+          rates:
+            type:
+              - array
+              - "null"
+            items:
+              type:
+                - object
+                - "null"
+              properties:
+                date:
+                  type:
+                    - string
+                    - "null"
+                rate:
+                  type:
+                    - string
+                    - "null"
+                nights:
+                  type:
+                    - number
+                    - "null"
+                isQuoted:
+                  type:
+                    - boolean
+                    - "null"
+          taxes:
+            type:
+              - array
+              - "null"
+            items:
+              type:
+                - object
+                - "null"
+              properties:
+                id:
+                  type:
+                    - string
+                    - "null"
+                name:
+                  type:
+                    - string
+                    - "null"
+                total:
+                  type:
+                    - string
+                    - "null"
+          total:
+            type:
+              - string
+              - "null"
+          balance:
+            type:
+              - string
+              - "null"
+          charges:
+            type:
+              - array
+              - "null"
+            items:
+              type:
+                - object
+                - "null"
+              properties:
+                name:
+                  type:
+                    - string
+                    - "null"
+                total:
+                  type:
+                    - string
+                    - "null"
+          currency:
+            type:
+              - string
+              - "null"
+          discount:
+            type:
+              - string
+              - "null"
+          guestAdr:
+            type:
+              - string
+              - "null"
+          payments:
+            type:
+              - string
+              - "null"
+          subTotal:
+            type:
+              - string
+              - "null"
+          actualAdr:
+            type:
+              - string
+              - "null"
+          grossRent:
+            type:
+              - string
+              - "null"
+          guestFees:
+            type:
+              - string
+              - "null"
+          insurance:
+            type:
+              - string
+              - "null"
+          totalFees:
+            type:
+              - string
+              - "null"
+          totalRent:
+            type:
+              - string
+              - "null"
+          extraRates:
+            type:
+              - object
+              - "null"
+          grandTotal:
+            type:
+              - string
+              - "null"
+          totalTaxes:
+            type:
+              - string
+              - "null"
+          folioCharges:
+            type:
+              - string
+              - "null"
+          guestTaxFees:
+            type:
+              - string
+              - "null"
+          guestRentFees:
+            type:
+              - string
+              - "null"
+          additionalRent:
+            type:
+              - string
+              - "null"
+          guestGrossRent:
+            type:
+              - string
+              - "null"
+          guestTotalRent:
+            type:
+              - string
+              - "null"
+          guestServiceFees:
+            type:
+              - string
+              - "null"
+          guestItemizedFees:
+            type:
+              - string
+              - "null"
+      agreementStatus:
+        type:
+          - string
+          - "null"
+      automatePayment:
+        type:
+          - boolean
+          - "null"
+      paymentMethodId:
+        type:
+          - number
+          - "null"
+      isUnitTypeLocked:
+        type:
+          - boolean
+          - "null"
+      guaranteePolicyId:
+        type:
+          - number
+          - "null"
+      cancellationReason:
+        type:
+          - object
+          - "null"
+      cancellationPolicyId:
+        type:
+          - number
+          - "null"
+      cancellationReasonId:
+        type:
+          - number
+          - "null"
+      requiredSecurityDeposit:
+        type:
+          - string
+          - "null"
+      remainingSecurityDeposit:
+        type:
+          - number
+          - "null"
+    additionalProperties: true
+  reservations_booking_fees:
+    type: object
+    $schema: "http://json-schema.org/schema#"
+    required:
+      - reservation_id
+      - id
+    properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
+      type:
+        type:
+          - string
+          - "null"
+      id:
+        type: number
+      value:
+        type:
+          - string
+          - "null"
+      createdAt:
+        type:
+          - string
+          - "null"
+      createdBy:
+        type:
+          - string
+          - "null"
+      updatedAt:
+        type:
+          - string
+          - "null"
+      updatedBy:
+        type:
+          - string
+          - "null"
+      bookingFeeId:
+        type:
+          - number
+          - "null"
+      reservation_id:
+        type: number
+    additionalProperties: true
+  reservations_logs:
+    type: object
+    $schema: "http://json-schema.org/schema#"
+    required:
+      - reservation_id
+      - id
+    properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
+      type:
+        type:
+          - string
+          - "null"
+      id:
+        type: number
+      params:
+        anyOf:
+          - type: array
+          - type: object
+            properties:
+              type:
+                type: string
+              id:
+                type:
+                  - "null"
+                  - number
+              new:
+                anyOf:
+                  - type:
+                      - number
+                      - string
+                  - type: object
+                    properties:
+                      amount:
+                        type: string
+                      currency:
+                        type: string
+                      "2024-07-19":
+                        type: string
+                      "2024-07-20":
+                        type: string
+                      "2024-07-21":
+                        type: string
+                      "2024-08-13":
+                        type: string
+                      "2024-08-14":
+                        type: string
+                      "2024-08-15":
+                        type: string
+                      "2024-08-16":
+                        type: string
+                      "2024-08-17":
+                        type: string
+                      "2024-08-18":
+                        type: string
+              old:
+                anyOf:
+                  - type:
+                      - number
+                      - string
+                  - type: object
+                    properties:
+                      "2024-07-19":
+                        type: string
+                      "2024-07-20":
+                        type: string
+                      "2024-07-21":
+                        type: string
+                      "2024-08-13":
+                        type: string
+                      "2024-08-14":
+                        type: string
+                      "2024-08-15":
+                        type: string
+                      "2024-08-16":
+                        type: string
+                      "2024-08-17":
+                        type: string
+                      "2024-08-18":
+                        type: string
+              folio:
+                type: number
+              value:
+                type: string
+              amount:
+                type:
+                  - "null"
+                  - number
+                  - string
+              emails:
+                type: array
+                items:
+                  type: string
+              method:
+                type: number
+              source:
+                type:
+                  - number
+                  - string
+              numbers:
+                type: array
+                items:
+                  type: string
+              txnDate:
+                type: string
+              chargeId:
+                type: number
+              currency:
+                type: string
+              document:
+                type: number
+              new-date:
+                type: string
+              workOrder:
+                type: number
+              automation:
+                type: number
+              destination:
+                type: number
+              transaction:
+                type:
+                  - "null"
+                  - number
+              checkoutDate:
+                type: string
+              moveReasonId:
+                type: number
+              transactions:
+                type: array
+                items:
+                  type: number
+              masterFolioId:
+                type: number
+              original-date:
+                type: string
+              transactionId:
+                type: number
+              masterFolioRuleId:
+                type:
+                  - "null"
+                  - number
+      message:
+        type:
+          - string
+          - "null"
+      createdAt:
+        type:
+          - string
+          - "null"
+      createdBy:
+        type:
+          - string
+          - "null"
+      reservation_id:
+        type: number
+    additionalProperties: true
+  reservations_notes:
+    type: object
+    $schema: "http://json-schema.org/schema#"
+    required:
+      - reservation_id
+      - id
+    properties:
+      _airbyte_record_md5:
+        $ref: "#/definitions/record_md5_property"
+      id:
+        type: number
+      note:
+        type:
+          - string
+          - "null"
+      isPublic:
+        type:
+          - boolean
+          - "null"
+      createdAt:
+        type:
+          - string
+          - "null"
+      createdBy:
+        type:
+          - string
+          - "null"
+      updatedAt:
+        type:
+          - string
+          - "null"
+      updatedBt:
+        type:
+          - string
+          - "null"
+      reservation_id:
+        type: number
     additionalProperties: true

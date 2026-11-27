@@ -30,7 +30,7 @@ def mock_reservations(http_mocker: HttpMocker, records: list[dict]) -> None:
     http_mocker.get(
         HttpRequest(
             "https://example.trackhs.com/api/pms/reservations",
-            query_params={"size": "100", "scroll": "1", "sortColumn": "id", "updatedSince": "1900-01-01T00:00:00+0000"},
+            query_params={"size": "50", "scroll": "1"},
         ),
         HttpResponse(json.dumps({"_embedded": {"reservations": records}, "scroll": None})),
     )

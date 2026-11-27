@@ -61,7 +61,7 @@ The `units_daily_pricing_v2` and `units_types_daily_pricing_v2` streams read pri
 | date_groups | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getdategroupcollection) |
 | documents | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getalldocuments) |
 | folios | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getfolioscollection) |
-| folios_logs | folio_id.id | DefaultPaginator | ✅ |  ❌  | Undocumented |
+| folios_logs | folio_id.id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getallfoliologs) |
 | folios_rules | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getfoliorulescollection) |
 | folios_transactions | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getfolioidtransactionscollection) |
 | fractionals | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/get-pms-fractionals) |
@@ -79,6 +79,7 @@ The `units_daily_pricing_v2` and `units_types_daily_pricing_v2` streams read pri
 | maintenance_problems | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getmaintenanceproblemscollection) |
 | maintenance_work_orders | id | DefaultPaginator | ✅ |  ✅  | [Link](https://developer.trackhs.com/reference/getmaintworkorders) |
 | nodes | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getnodes) |
+| nodes_availability | node_id.date | No pagination | ✅ |  ❌  | Undocumented |
 | nodes_types | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getallnodetypes) |
 | owners | id | DefaultPaginator | ✅ |  ✅  | [Link](https://developer.trackhs.com/reference/getownercollection) |
 | owners_contracts | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getownercontractcollection) |
@@ -90,11 +91,14 @@ The `units_daily_pricing_v2` and `units_types_daily_pricing_v2` streams read pri
 | quotes | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getquotescollectionv2) |
 | rate_types | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getallratetypes) |
 | reservations | id | Elastic Search PIT | ✅ |  ✅  | [Link](https://developer.trackhs.com/reference/getreservations) |
+| reservations_booking_fees | reservation_id.id | DefaultPaginator | ✅ |  ❌  | Undocumented |
 | reservations_cancellation_policies | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getcancellationpolicies) |
 | reservations_cancellation_reasons | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getcancellationreasons) |
 | reservations_discount_reasons | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getdiscountreasons) |
 | reservations_fees | reservation_id.id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getreservationfees) |
 | reservations_guarantee_policies | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/get-pms-reservations-policies-guaranties) |
+| reservations_logs | reservation_id.id | DefaultPaginator | ✅ |  ❌  | Undocumented |
+| reservations_notes | reservation_id.id | DefaultPaginator | ✅ |  ❌  | Undocumented |
 | reservations_tags | reservation_id.id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getv1reservationtags) |
 | reservations_types | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getreservationtypes) |
 | reservations_v2 | id | Elastic Search PIT | ✅ |  ✅  | [Link](https://developer.trackhs.com/reference/getreservationsv2) |
@@ -109,15 +113,14 @@ The `units_daily_pricing_v2` and `units_types_daily_pricing_v2` streams read pri
 | units | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getchannelunits) |
 | units_amenities | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getunitamenities) |
 | units_amenity_groups | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getunitamenitygroups) |
+| units_availability | unit_id.date | No pagination | ✅ |  ❌  | Undocumented |
 | units_bed_types | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getbedtypescollection) |
 | units_blocks | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getunitblockscollection) |
 | units_channel | unit_id.id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getunitchannelunitcollection) |
-| units_daily_pricing_parent | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getchannelunits) |
 | units_daily_pricing_v2 | unit_id.rateTypeId | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getv2unitdailypricing) |
 | units_taxes | unit_id.id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getunitchanneltaxcollection) |
 | units_taxes_parent | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getchannelunits) |
 | units_types | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getunittypes-2) |
-| units_types_daily_pricing_parent | id | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getunittypes-2) |
 | units_types_daily_pricing_v2 | unit_type_id.rateTypeId | DefaultPaginator | ✅ |  ❌  | [Link](https://developer.trackhs.com/reference/getv2unittypedailypricing) |
 | users | id | DefaultPaginator | ✅ |  ❌  | Undocumented |
 | users_pii_redacted | id | DefaultPaginator | ✅ |  ❌  | Undocumented |
